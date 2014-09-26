@@ -1,0 +1,349 @@
+* Emacs Org Configuration
+Last edited on 2014-04-07 00:22:47
+* Description
+This file is tangled using =org-babel-load-file=. What this does is generate 
+a =emacs-init.el= from the =emacs-lisp= source blocks.
+
+
+#+BEGIN_SRC text
+└── emacs.d
+    ├── README.markdown
+    ├── emacs-init.org
+    ├── init.el
+    ├── packages
+    ├── snippets
+    ├── themes
+    └── users
+#+END_SRC
+
+*** Credits:
+
+[[https://github.com/daschwa/dotfiles/blob/master/emacs.d/emacs-init.org][daschwa]]
+
+
+* Installation
+** OS X
+*** Install Emacs
+#+BEGIN_SRC sh
+brew update
+brew install emacs --cocoa --srgb --with-gnutls
+brew linkapps
+#+END_SRC
+    
+
+
+
+** Package Management
+  
+[[https://github.com/rdallasgray/pallet][Pallet]] is a very helpful package management tool for Emacs. 
+It utilizes a dependency management platform called [[https://github.com/cask/cask][Cask]], 
+to update a centralized =Cask= file when you install or remove packages.
+
+** Cask
+Cask is initialized in =init.el= with the following:
+#+BEGIN_SRC emacs-lisp :tangle no
+(require 'cask "/usr/local/Cellar/cask/0.7.1/cask.el")
+(cask-initialize)
+#+END_SRC
+
+** Pallet
+- Install [[https://github.com/cask/cask][Cask]].
+- Run =cask install= in =$HOME/.emacs.d/=.
+- We require Cask after loading the dependency management system
+
+* Configuration
+
+** Dependency Management with =req-package=
+
+Where Pallet keeps track of the packages we have installed, =req-package=
+handles all our internal package dependencies and configurations.
+#+BEGIN_QUOTE
+[[https://github.com/edvorg/req-package][req-package]] is a wrapper on top of [[https://github.com/jwiegley/use-package][use-package]], a package dependency
+management tool. The documentation for =use-package= is immensely helpful for
+figuring out how to describe package dependencies and settings. =req-package=
+adds the =:require= keyword which allows you to define dependencies between
+related packages.
+#+END_QUOTE
+
+From use-package :
+#+BEGIN_QUOTE
+Use the :init keywoard to do some stuff to initialize foo. 
+A companion to the :init keyword is :config. Although :init always
+happens in the case of deferred modules (which are likely to be the
+most common kind), :config form only run after the module has been
+loaded by Emacs:
+
+
+(use-package haskell-mode
+  :commands haskell-mode
+  :init
+  (add-to-list 'auto-mode-alist '("\\.l?hs$" . haskell-mode))
+  :config
+  (progn
+    (use-package inf-haskell)
+    (use-package hs-lint)))
+
+In this case, I want to autoload the command haskell-mode from
+"haskell-mode.el", add it to auto-mode-alist at the time ".emacs" is
+loaded, but wait until after I've opened a Haskell file before loading
+"inf-haskell.el" and "hs-lint.el".
+#+END_QUOTE
+
+
+Another nice thing about =req-package=, is that you no longer not need to 
+specify the =:ensure= keyword, as it is added by default.
+
+Start using =req-package=
+#+BEGIN_SRC emacs-lisp
+(require 'req-package)
+#+END_SRC
+
+
+
+** Configure modules 
+
+*** Flycheck
+A great syntax checker.
+#+BEGIN_SRC emacs-lisp
+(eval-after-load 'flycheck
+  '(add-hook 'flycheck-mode-hook #'flycheck-cask-setup))
+
+(req-package flycheck
+  :diminish (global-flycheck-mode . " ✓ ")
+  :config
+  (add-hook 'after-init-hook 'global-flycheck-mode))
+
+(req-package helm-flycheck
+  :require flycheck
+  :commands helm-flycheck
+  :config
+  (bind-key "C-c ! h"
+            'helm-flycheck
+            flycheck-mode-map))
+#+END_SRC
+
+*** Haskell mode
+#+BEGIN_SRC emacs-lisp
+(req-package haskell-mode
+  :require (flycheck flycheck-haskell)
+  :commands haskell-mode
+  :init
+  (add-to-list 'auto-mode-alist '("\\.l?hs$" . haskell-mode))
+  :config
+  (progn
+    (req-package inf-haskell)
+    (req-package hs-lint)
+    (bind-key "C-x C-d" nil haskell-mode-map)
+    (bind-key "C-c C-z" 'haskell-interactive-switch haskell-mode-map)
+    (bind-key "C-c C-l" 'haskell-process-load-file haskell-mode-map)
+    (bind-key "C-c C-b" 'haskell-interactive-switch haskell-mode-map)
+    (bind-key "C-c C-t" 'haskell-process-do-type haskell-mode-map)
+    (bind-key "C-c C-i" 'haskell-process-do-info haskell-mode-map)
+    (bind-key "C-c M-." nil haskell-mode-map)
+    (bind-key "C-c C-d" nil haskell-mode-map)
+    (defun my-haskell-hook ()
+      (setq mode-name " λ ")
+      (turn-on-haskell-doc)
+      (diminish 'haskell-doc-mode "")
+      (capitalized-words-mode)
+      (diminish 'capitalized-words-mode "")
+      (turn-on-eldoc-mode)
+      (diminish 'eldoc-mode "")
+      (turn-on-haskell-decl-scan)
+      (setq evil-auto-indent nil))
+    (setq haskell-font-lock-symbols 'unicode)
+    (setq haskell-literate-default 'tex)
+    (setq haskell-stylish-on-save t)
+    (setq haskell-tags-on-save t)
+    (setq inferior-haskell-find-project-root nil)
+    (add-hook 'haskell-mode-hook 'my-haskell-hook)))
+
+(req-package flycheck-haskell
+  :config (add-hook 'flycheck-mode-hook #'flycheck-haskell-setup))
+
+
+(setq shm-program-name  "/Users/nrolland/.emacs.d/structured-haskell-mode/dist/build/structured-haskell-mode/structured-haskell-mode")
+
+(req-package ghc
+  :init (add-hook 'haskell-mode-hook (lambda () (ghc-init))))
+
+(add-to-list 'load-path "/Users/nrolland/.emacs.d/structured-haskell-mode/elisp")
+(req-package shm
+             :require haskell-mode
+             :commands structured-haskell-mode
+             :init (add-hook 'haskell-mode-hook
+                             'structured-haskell-mode))
+
+#+END_SRC
+
+
+                             
+    
+*** Company
+Company is a text completion framework for Emacs. The name stands for
+"complete anything". It uses pluggable back-ends and front-ends to
+retrieve and display completion candidates.
+
+Type M-x company-complete to initiate completion manually. Bind this
+command to a key combination of your choice.
+
+To see or change the list of enabled back-ends, type M-x
+customize-variable RET company-backends. Also see its description for
+information on writing a back-end.
+
+For information on specific back-ends, also check out the comments
+inside the respective files.
+
+For more information, type M-x describe-function RET company-mode.
+
+
+#+BEGIN_SRC emacs-lisp
+(req-package company
+  :config
+  (add-hook 'after-init-hook 'global-company-mode))
+
+(req-package company-ghc
+             :require company 
+             :init (add-to-list 'company-backends 'company-ghc))
+#+END_SRC
+
+
+*** Multiple Cursors
+[[https://github.com/emacsmirror/multiple-cursors][Multiple Cursors]] brings you seemingly unlimited power.
+
+#+BEGIN_SRC emacs-lisp
+;; Create new cursor by marking region with up / down
+(req-package rectangular-region-mode
+             :require multiple-cursors-core
+             :bind ("C-c C-SPC" . set-rectangular-region-anchor))
+;; Mark by keyword
+(req-package mc-mark-more
+             :require (multiple-cursors-core thingatpt)
+             :bind (("C-c C->" . mc/mark-next-like-this)
+                    ("C-c C-<" . mc/mark-previous-like-this)
+                    ( "C-c c s" . mc/mark-all-like-this)))
+#+END_SRC
+
+*** IDO  : Interactively Do Things
+#+BEGIN_SRC emacs-lisp
+(req-package ido
+   :config
+   (ido-mode t)
+   (setq ido-save-directory-list-file "~/.emacs.d/.ido.last")
+   (setq ido-enable-flex-matching t)
+   (setq ido-use-filename-at-point 'guess)
+   (setq ido-show-dot-for-dired t))
+#+END_SRC
+
+*** Expand-region
+Expand region increases the selected region by semantic units. Just keep pressing the key until it selects what you want.
+#+BEGIN_SRC emacs-lisp
+(req-package expand-region
+    :bind ("C-=" . er/expand-region ))
+#+END_SRC
+
+*** Key bindings
+    SCHEDULED: <2014-09-14 Sun>
+#+BEGIN_SRC emacs-lisp
+;; default key to switch buffer is C-x b, but that's not easy enough
+;; when you do that, to kill emacs either close its frame from the window
+;; manager or do M-x kill-emacs.  Don't need a nice shortcut for a once a
+;; week (or day) action.
+(global-set-key (kbd "C-x C-b") 'ido-switch-buffer)
+(global-set-key (kbd "C-x B") 'ibuffer)
+#+END_SRC
+
+
+*** Guide-key
+
+[[https://github.com/kbkbkbkb1/guide-key][Guide-key.el]] displays the available key bindings automatically and
+dynamically.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (req-package guide-key
+    :diminish (guide-key-mode . "")
+    :config
+    (guide-key-mode 1)
+    (setq guide-key/guide-key-sequence
+          '("C-x r" "C-c h" "C-x 4" "C-x 5"
+            (org-mode "C-c C-x")))
+    (setq guide-key/popup-window-position 'bottom)
+    (setq guide-key/highlight-command-regexp
+          '(("rectangle" . font-lock-warning-face)
+            ("register"  . font-lock-type-face))))
+#+END_SRC
+
+*** Emacs settings
+#+BEGIN_SRC emacs-lisp
+(require 'cl)				; common lisp goodies, loop
+
+(add-to-list 'load-path (concat user-emacs-directory "config/"))
+
+(defconst user-init-dir
+  (cond ((boundp 'user-emacs-directory)
+         user-emacs-directory)
+        ((boundp 'user-init-directory)
+         user-init-directory)
+        (t "~/.emacs.d/")))
+
+(setq backup-directory-alist
+        `(("." . ,(expand-file-name
+                   (concat user-emacs-directory "backups")))))
+;; Save point position between sessions
+(require 'saveplace)
+(setq-default save-place t)
+(setq save-place-file (expand-file-name "places" user-emacs-directory))
+
+(when (memq window-system '(mac ns))
+  (exec-path-from-shell-initialize))
+(setq visible-bell t)
+
+(require 'better-defaults)
+
+(setq default-directory "~/") 
+(setq inhibit-splash-screen t)		; no splash screen, thanks
+(line-number-mode 1)			; have line numbers and
+(column-number-mode 1)			; column numbers in the mode line
+(tool-bar-mode -1)			; no tool bar with icons
+(unless (string-match "apple-darwin" system-configuration)
+  ;; on mac, there's always a menu bar drown, don't have it empty
+  (menu-bar-mode -1))
+(load-file (let ((coding-system-for-read 'utf-8))
+                (shell-command-to-string "agda-mode locate")))
+#+END_SRC
+
+
+
+
+*** Pallet
+
+__Dual install__
+As gnu emacs and aquamacs are installed, the packages installed in
+the package manager of one will update the Cask file thanks to
+Pallet, but I still need to install them in the other installation.
+
+#+BEGIN_SRC emacs-lisp
+(req-package pallet
+  :config
+  (progn
+    (pallet-install)))
+#+END_SRC
+    
+*** Smex
+[[https://github.com/nonsequitur/smex][Smex]] brings ido searching to =M-x=.
+
+#+BEGIN_SRC emacs-lisp
+  (req-package smex
+               :require ido
+               :bind (("M-t" . smex)
+                      ("M-X" . smex-major-mode-commands)
+                      ;; This is old M-t.
+                      ("C-c C-c M-t" . execute-extended-command)))
+#+END_SRC
+
+
+* Finish Requirements
+All done with  =req-package=.
+#+BEGIN_SRC emacs-lisp
+(req-package-finish)
+#+END_SRC
