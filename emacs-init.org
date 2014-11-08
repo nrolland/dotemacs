@@ -22,14 +22,7 @@ a =emacs-init.el= from the =emacs-lisp= source blocks.
 
 
 * Installation
-** OS X
-*** Install Emacs
-#+BEGIN_SRC sh
-brew update
-brew install emacs --cocoa --srgb --with-gnutls
-brew linkapps
-#+END_SRC
-    
+
 
 
 
@@ -38,6 +31,13 @@ brew linkapps
 [[https://github.com/rdallasgray/pallet][Pallet]] is a very helpful package management tool for Emacs. 
 It utilizes a dependency management platform called [[https://github.com/cask/cask][Cask]], 
 to update a centralized =Cask= file when you install or remove packages.
+** OS X
+*** Install Emacs
+#+BEGIN_SRC sh
+brew update
+brew install emacs --cocoa --srgb --with-gnutls
+brew linkapps
+#+END_SRC
 
 ** Cask
 Cask is initialized in =init.el= with the following:
@@ -103,7 +103,7 @@ Start using =req-package=
 ** Configure modules 
 
 *** Flycheck
-A great syntax checker.
+    A great syntax checker.
 #+BEGIN_SRC emacs-lisp
 (eval-after-load 'flycheck
   '(add-hook 'flycheck-mode-hook #'flycheck-cask-setup))
