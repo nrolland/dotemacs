@@ -15,9 +15,12 @@
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (load-file custom-file)
 
+(setq custom-file (expand-file-name "hs-lint.el" user-emacs-directory))
+(load-file custom-file)
+
 (setq use-package-verbose t)
 (require 'ob-tangle)
-;; (setq debug-on-error t)
+(setq debug-on-error t)
 (org-babel-load-file
  (expand-file-name "emacs-init.org"
                    user-emacs-directory))

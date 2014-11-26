@@ -50,7 +50,7 @@ Cask is initialized in =init.el= with the following:
 - Install [[https://github.com/cask/cask][Cask]].
 - Run =cask install= in =$HOME/.emacs.d/=.
 - We require Cask after loading the dependency management system
-
+  
 * Configuration
 
 ** Dependency Management with =req-package=
@@ -141,6 +141,7 @@ Start using =req-package=
     (bind-key "C-c C-i" 'haskell-process-do-info haskell-mode-map)
     (bind-key "C-c M-." nil haskell-mode-map)
     (bind-key "C-c C-d" nil haskell-mode-map)
+    (bind-key "C-c C-h"    'haskell-hoogle haskell-mode-map)
     (defun my-haskell-hook ()
       (setq mode-name " λ ")
       (turn-on-haskell-doc)
@@ -150,6 +151,7 @@ Start using =req-package=
       (turn-on-eldoc-mode)
       (diminish 'eldoc-mode "")
       (turn-on-haskell-decl-scan)
+      (local-set-key "\C-cl" 'hs-lint)
       (setq evil-auto-indent nil))
     (setq haskell-font-lock-symbols 'unicode)
     (setq haskell-literate-default 'tex)
@@ -274,9 +276,18 @@ dynamically.
 #+END_SRC
 
 *** Emacs settings
+This is to save-as a file.
+C-x C-j (dired-jump to current file) 
+R to rename the file (or dired-do-rename). 
+C-x k RET to go back to the (renamed) buffer The rename is equivalent to a shell mv, but will also update any open buffers.
+
+#+BEGIN_SRC emacs-lisp
+(require 'dired-x)
+#+END_SRC
+
 #+BEGIN_SRC emacs-lisp
 (require 'cl)				; common lisp goodies, loop
-
+(global-linum-mode t)
 (add-to-list 'load-path (concat user-emacs-directory "config/"))
 
 (defconst user-init-dir
@@ -350,5 +361,7 @@ Pallet, but I still need to install them in the other installation.
 * Finish Requirements
 All done with  =req-package=.
 #+BEGIN_SRC emacs-lisp
+(custom-set-variables
+ '(haskell-process-log t))
 (req-package-finish)
 #+END_SRC
