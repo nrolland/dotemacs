@@ -7,7 +7,27 @@
 ;; process. So your config org file should not be named "init.org".
 
 ;; Initialize cask to get the correct version of org-mode 
-(require 'cask "/usr/local/Cellar/cask/0.7.1/cask.el")
+(cond
+ ((string-equal system-type "windows-nt") ; Microsoft Windows
+  (progn
+   (require 'cask "c:/Users/a-niroll/.cask/cask.el")   
+    (message "Microsoft Windows") )
+ )
+ ((string-equal system-type "darwin")   ; Mac OS X
+  (progn
+    (require 'cask "/usr/local/Cellar/cask/0.7.1/cask.el") )  
+ )
+ ((string-equal system-type "gnu/linux") ; linux
+  (progn
+   (require 'cask "/usr/local/Cellar/cask/0.7.1/cask.el")   
+   (message "Linux") )
+ )
+ ((string-equal system-type "cygwin") ; cygwin
+  (progn
+   (require 'cask "/cygdrive/c/users/a-niroll/.cask/cask.el")   
+   (message "cygwin") )
+ )
+)
 (cask-initialize)
 
 ;; Load customization
