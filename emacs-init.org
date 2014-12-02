@@ -251,6 +251,9 @@ Expand region increases the selected region by semantic units. Just keep pressin
 ;; when you do that, to kill emacs either close its frame from the window
 ;; manager or do M-x kill-emacs.  Don't need a nice shortcut for a once a
 ;; week (or day) action.
+
+(global-set-key (kbd "C-x f")  'ido-find-file)
+(global-set-key (kbd "C-l")  'kill-whole-line)
 (global-set-key (kbd "C-x C-b") 'ido-switch-buffer)
 (global-set-key (kbd "C-x B") 'ibuffer)
 #+END_SRC
