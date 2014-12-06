@@ -15,11 +15,11 @@
  )
  ((string-equal system-type "darwin")   ; Mac OS X
   (progn
-    (require 'cask "/usr/local/Cellar/cask/0.7.1/cask.el") )  
+    (require 'cask "/usr/local/Cellar/cask/0.7.2/cask.el") )  
  )
  ((string-equal system-type "gnu/linux") ; linux
   (progn
-   (require 'cask "/usr/local/Cellar/cask/0.7.1/cask.el")   
+   (require 'cask "/usr/local/Cellar/cask/0.7.2/cask.el")   
    (message "Linux") )
  )
  ((string-equal system-type "cygwin") ; cygwin
@@ -33,9 +33,6 @@
 ;; Load customization
 ;; Keep emacs custom-settings in separate file
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
-(load-file custom-file)
-
-(setq custom-file (expand-file-name "hs-lint.el" user-emacs-directory))
 (load-file custom-file)
 
 (setq use-package-verbose t)
