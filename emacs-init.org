@@ -31,7 +31,7 @@ a =emacs-init.el= from the =emacs-lisp= source blocks.
 [[https://github.com/rdallasgray/pallet][Pallet]] is a very helpful package management tool for Emacs. 
 It utilizes a dependency management platform called [[https://github.com/cask/cask][Cask]], 
 to update a centralized =Cask= file when you install or remove packages.
-** OS X
+** Instruction for OS X
 *** Install Emacs
 #+BEGIN_SRC sh
 brew update
@@ -39,18 +39,31 @@ brew install emacs --cocoa --srgb --with-gnutls
 brew linkapps
 #+END_SRC
 
-** Cask
+*** install Cask
 Cask is initialized in =init.el= with the following:
 #+BEGIN_SRC emacs-lisp :tangle no
-(require 'cask "/usr/local/Cellar/cask/0.7.1/cask.el")
+(require 'cask "/usr/local/Cellar/cask/0.7.2/cask.el")
 (cask-initialize)
 #+END_SRC
 
-** Pallet
+*** install Packages  
 - Install [[https://github.com/cask/cask][Cask]].
 - Run =cask install= in =$HOME/.emacs.d/=.
 - We require Cask after loading the dependency management system
   
+*** install cabal dependencies
+
+for now it is :
+- ghc-mod 
+- agda
+- hoogle
+- goa
+- lambdabot
+
+rajouter 
+~/.ghc ❯❯❯ cat ghci.conf
+:def hoogle \s -> return $ ":! hoogle --count=15 \"" ++ s ++ "\""%
+
 * Configuration
 
 ** Dependency Management with =req-package=
@@ -167,17 +180,21 @@ Start using =req-package=
 (setq shm-program-name  "/Users/nrolland/.emacs.d/structured-haskell-mode/dist/build/structured-haskell-mode/structured-haskell-mode")
 
 (req-package ghc
-  :init (add-hook 'haskell-mode-hook (lambda () (ghc-init))))
+  :init (add-hook 'haskell-mode-hook (lambda () (progn (ghc-init)
+                                                       (turn-on-haskell-indent)
+                                                )
+                                     )
+        ))
 
 (add-to-list 'load-path "/Users/nrolland/.emacs.d/structured-haskell-mode/elisp")
+
+#+END_SRC
+
 (req-package shm
              :require haskell-mode
              :commands structured-haskell-mode
              :init (add-hook 'haskell-mode-hook
                              'structured-haskell-mode))
-
-#+END_SRC
-
 
                              
     
@@ -339,9 +356,10 @@ C-x k RET to go back to the (renamed) buffer The rename is equivalent to a shell
 __Dual install__
 As gnu emacs and aquamacs are installed, the packages installed in
 the package manager of one will update the Cask file thanks to
-Pallet, but I still need to install them in the other installation.
+Pallet, but I still need to install them in the other installations.
+It takes time upon loading, so I dont usually tangle it.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle no
 (req-package pallet
   :config
   (progn
