@@ -14,7 +14,7 @@
  '(agda2-include-dirs (quote ("." "/Users/nrolland/clones/agda-stdlib/src")))
  '(aquamacs-additional-fontsets nil t)
  '(aquamacs-autoface-mode nil)
- '(aquamacs-customization-version-id 305 t)
+ '(aquamacs-customization-version-id 307 t)
  '(aquamacs-tool-bar-user-customization nil t)
  '(default-frame-alist
     (quote
@@ -29,7 +29,9 @@
       (left-fringe . 1)
       (right-fringe)
       (fringe))))
- '(ns-tool-bar-display-mode nil t)
+ '(global-linum-mode t)
+ '(haskell-process-log t)
+ '(ns-tool-bar-display-mode (quote both) t)
  '(ns-tool-bar-size-mode nil t)
  '(shm-program-name "
     " t)

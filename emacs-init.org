@@ -314,6 +314,28 @@ C-x k RET to go back to the (renamed) buffer The rename is equivalent to a shell
 (require 'dired-x)
 #+END_SRC
 
+
+Winner Mode has been included with GNU Emacs since version 20.
+
+Winner Mode is a global minor mode. When activated, it allows you to “undo” (and “redo”) 
+changes in the window configuration with the key commands ‘C-c left’ and ‘C-c right’ 
+http://www.emacswiki.org/emacs/WinnerMode
+
+
+#+BEGIN_SRC emacs-lisp
+ (when (fboundp 'winner-mode)
+  (winner-mode)
+  (global-set-key [f7] 'winner-undo)
+  (global-set-key [C-f7] 'winner-redo)
+  (global-set-key [f9] 'delete-other-windows)
+  (global-set-key [C-f9] 'delete-window))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(require 'dired-x)
+#+END_SRC
+
+
 #+BEGIN_SRC emacs-lisp
 (require 'cl)				; common lisp goodies, loop
 (global-linum-mode t)
