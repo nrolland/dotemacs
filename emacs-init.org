@@ -114,6 +114,37 @@ Start using =req-package=
 
 
 ** Configure modules 
+ 
+*** persistent history
+#+BEGIN_SRC emacs-lisp
+(defun comint-write-history-on-exit (process event)
+  (comint-write-input-ring)
+  (let ((buf (process-buffer process)))
+    (when (buffer-live-p buf)
+      (with-current-buffer buf
+        (insert (format "\nProcess %s %s" process event))))))
+
+(defun turn-on-comint-history ()
+  (let ((process (get-buffer-process (current-buffer))))
+    (when process
+      (setq comint-input-ring-file-name
+            (format "~/.emacs.d/inferior-%s-history"
+                    (process-name process)))
+      (comint-read-input-ring)
+      (set-process-sentinel process
+                            #'comint-write-history-on-exit))))
+
+(defun mapc-buffers (fn)
+  (mapc (lambda (buffer)
+          (with-current-buffer buffer
+            (funcall fn)))
+        (buffer-list)))
+
+(defun comint-write-input-ring-all-buffers ()
+  (mapc-buffers 'comint-write-input-ring))
+
+(add-hook 'kill-emacs-hook 'comint-write-input-ring-all-buffers)
+#+END_SRC
 
 *** Flycheck
     A great syntax checker.
@@ -154,13 +185,19 @@ Start using =req-package=
     (bind-key "C-c C-i" 'haskell-process-do-info haskell-mode-map)
     (bind-key "C-c M-." nil haskell-mode-map)
     (bind-key "C-c C-d" nil haskell-mode-map)
-    (bind-key "C-c C-h"    'haskell-hoogle haskell-mode-map)
-(defun haskell-process-completions-at-point ()
-  "A company-mode-compatible complete-at-point function."
-  (-when-let (process (haskell-process))
-    (-when-let (symbol (symbol-at-point))
-      (destructuring-bind (start . end) (bounds-of-thing-at-point 'symbol)
-        (let ((completions (haskell-process-get-repl-completions (haskell-process)
+    (bind-key "C-c C-h" 'haskell-hoogle haskell-mode-map)
+    (bind-key "<f8>"    'haskell-navigate-imports haskell-mode-map)
+    (define-key haskell-mode-map (kbd "SPC") 'haskell-mode-contextual-space)
+    (let ((my-cabal-path (expand-file-name "~/Library/Haskell/bin")))
+       (setenv "PATH" (concat my-cabal-path ":" (getenv "PATH")))
+       (add-to-list 'exec-path my-cabal-path))
+    (custom-set-variables '(haskell-tags-on-save t))
+    (defun haskell-process-completions-at-point ()
+      "A company-mode-compatible complete-at-point function."
+      (-when-let (process (haskell-process))
+        (-when-let (symbol (symbol-at-point))
+          (destructuring-bind (start . end) (bounds-of-thing-at-point 'symbol)
+           (let ((completions (haskell-process-get-repl-completions (haskell-process)
                                                                  (symbol-name symbol))))
           (list start end completions))))))
     (defun my-haskell-hook ()
@@ -180,6 +217,7 @@ Start using =req-package=
     (setq haskell-stylish-on-save t)
     (setq haskell-tags-on-save t)
     (setq inferior-haskell-find-project-root nil)
+    (add-hook 'inferior-haskell-mode-hook 'turn-on-comint-history)
     (add-hook 'haskell-mode-hook 'my-haskell-hook)))
 
 (req-package flycheck-haskell
@@ -330,6 +368,13 @@ http://www.emacswiki.org/emacs/WinnerMode
   (global-set-key [f9] 'delete-other-windows)
   (global-set-key [C-f9] 'delete-window))
 #+END_SRC
+
+This is to use the mouse-2 command on mac 
+#+BEGIN_SRC emacs-lisp
+(define-key key-translation-map (kbd "<C-mouse-1>") (kbd "<mouse-2>"))
+#+END_SRC
+
+
 
 #+BEGIN_SRC emacs-lisp
 (require 'dired-x)
