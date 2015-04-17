@@ -24,8 +24,6 @@ a =emacs-init.el= from the =emacs-lisp= source blocks.
 * Installation
 
 
-
-
 ** Package Management
   
 [[https://github.com/rdallasgray/pallet][Pallet]] is a very helpful package management tool for Emacs. 
@@ -33,6 +31,7 @@ It utilizes a dependency management platform called [[https://github.com/cask/ca
 to update a centralized =Cask= file when you install or remove packages.
 ** Instruction for OS X
 *** Install Emacs
+Soit avec nix, ou emacsforosx, ou 
 #+BEGIN_SRC sh
 brew update
 brew install emacs --cocoa --srgb --with-gnutls
@@ -50,6 +49,7 @@ Cask is initialized in =init.el= with the following:
 - Install [[https://github.com/cask/cask][Cask]].
 - Run =cask install= in =$HOME/.emacs.d/=.
 - We require Cask after loading the dependency management system
+- This should also install req-package
   
 *** install cabal dependencies
 
@@ -147,8 +147,9 @@ Start using =req-package=
 #+END_SRC
 
 *** Flycheck
-    A great syntax checker.
-#+BEGIN_SRC emacs-lisp
+    Not sure what to do with this.
+    I think it causes issues (find spinning at every save)
+    used to be for syntax checking
 (eval-after-load 'flycheck
   '(add-hook 'flycheck-mode-hook #'flycheck-cask-setup))
 
@@ -164,6 +165,20 @@ Start using =req-package=
   (bind-key "C-c ! h"
             'helm-flycheck
             flycheck-mode-map))
+#+BEGIN_SRC emacs-lisp
+
+#+END_SRC
+
+
+*** auto-complete
+#+BEGIN_SRC emacs-lisp
+(req-package ac-haskell-process
+   :require auto-complete
+  :config
+  (add-hook 'interactive-haskell-mode-hook 'ac-haskell-process-setup)
+  (add-hook 'haskell-interactive-mode-hook 'ac-haskell-process-setup))
+(eval-after-load "auto-complete"
+  '(add-to-list 'ac-modes 'haskell-interactive-mode))
 #+END_SRC
 
 *** Haskell mode
@@ -178,32 +193,31 @@ Start using =req-package=
     (req-package inf-haskell)
     (req-package hs-lint)
     (bind-key "C-x C-d" nil haskell-mode-map)
-    (bind-key "C-c C-z" 'haskell-interactive-switch haskell-mode-map)
-    (bind-key "C-c C-l" 'haskell-process-load-file haskell-mode-map)
-    (bind-key "C-c C-b" 'haskell-interactive-switch haskell-mode-map)
-    (bind-key "C-c C-t" 'haskell-process-do-type haskell-mode-map)
-    (bind-key "C-c C-i" 'haskell-process-do-info haskell-mode-map)
-    (bind-key "C-c M-." nil haskell-mode-map)
-    (bind-key "C-c C-d" nil haskell-mode-map)
-    (bind-key "C-c C-h" 'haskell-hoogle haskell-mode-map)
+    (bind-key "C-c C-z" 'haskell-interactive-switch   haskell-mode-map)
+    (bind-key "C-c C-l" 'haskell-process-load-file    haskell-mode-map)
+    (bind-key "C-c C-b" 'haskell-interactive-switch   haskell-mode-map)
+    (bind-key "C-`"     'haskell-process-bring        haskell-mode-map)
+    (bind-key "C-c C-t" 'haskell-process-do-type      haskell-mode-map)
+    (bind-key "C-c C-i" 'haskell-process-do-info      haskell-mode-map)
+    (bind-key "C-c M-."  nil                          haskell-mode-map)
+    (bind-key "C-c C-d" 'ac-haskell-process-popup-doc haskell-mode-map)
+    (bind-key "C-c C-h" 'haskell-hoogle               haskell-mode-map)
     (bind-key "<f8>"    'haskell-navigate-imports haskell-mode-map)
     (define-key haskell-mode-map (kbd "SPC") 'haskell-mode-contextual-space)
-    (let ((my-cabal-path (expand-file-name "~/Library/Haskell/bin")))
-       (setenv "PATH" (concat my-cabal-path ":" (getenv "PATH")))
-       (add-to-list 'exec-path my-cabal-path))
     (custom-set-variables '(haskell-tags-on-save t))
     (defun haskell-process-completions-at-point ()
       "A company-mode-compatible complete-at-point function."
       (-when-let (process (haskell-process))
         (-when-let (symbol (symbol-at-point))
           (destructuring-bind (start . end) (bounds-of-thing-at-point 'symbol)
-           (let ((completions (haskell-process-get-repl-completions (haskell-process)
+            (let ((completions (haskell-process-get-repl-completions (haskell-process)
                                                                  (symbol-name symbol))))
           (list start end completions))))))
     (defun my-haskell-hook ()
       (setq mode-name " λ ")
-      (turn-on-haskell-doc)
-      (diminish 'haskell-doc-mode "")
+      ;;ecrase ghc-show-type apres 1 seconde..
+      ;;(turn-on-haskell-doc)
+      ;;(diminish 'haskell-doc-mode "")
       (capitalized-words-mode)
       (diminish 'capitalized-words-mode "")
       (turn-on-eldoc-mode)
@@ -401,10 +415,32 @@ This is to use the mouse-2 command on mac
 (setq-default save-place t)
 (setq save-place-file (expand-file-name "places" user-emacs-directory))
 
-(when (memq window-system '(mac ns))
-  (exec-path-from-shell-initialize))
-(setq visible-bell t)
+#+END_SRC
 
+Attention : environnement of emacs and shell is different
+with the following we can transfer. 
+
+exec-path-from-shell-initializ : This sets $MANPATH, $PATH and exec-path from your shell, but only on OS X.
+
+
+https://github.com/purcell/exec-path-from-shell
+
+#+BEGIN_SRC emacs-lisp
+(req-package exec-path-from-shell
+   :config
+       (when (memq window-system '(mac ns))
+          ( progn 
+            (add-to-list 'exec-path-from-shell-variables "NIX_GHC_VERSION")
+            (add-to-list 'exec-path-from-shell-variables "NIX_GHC")
+            (add-to-list 'exec-path-from-shell-variables "NIX_GHCPKG")
+            (add-to-list 'exec-path-from-shell-variables "NIX_GHC_DOCDIR")
+            (add-to-list 'exec-path-from-shell-variables "NIX_GHC_LIBDIR")
+            (exec-path-from-shell-initialize)
+           )
+       )
+)
+
+(setq visible-bell t)
 (setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time
 (setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
 (setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse    
@@ -420,12 +456,29 @@ This is to use the mouse-2 command on mac
 (unless (string-match "apple-darwin" system-configuration)
   ;; on mac, there's always a menu bar drown, don't have it empty
   (menu-bar-mode -1))
-(load-file (let ((coding-system-for-read 'utf-8))
-                (shell-command-to-string "agda-mode locate")))
 #+END_SRC
 
-
-
+If you've Emacs 24.4 the cleanest way to do it would be the new feature exposed delete-duplicate-lines
+#+BEGIN_SRC
+(defun uniq-lines (beg end)
+  "Unique lines in region.
+Called from a program, there are two arguments:
+BEG and END (region to sort)."
+  (interactive "r")
+  (save-excursion
+    (save-restriction
+      (narrow-to-region beg end)
+      (goto-char (point-min))
+      (while (not (eobp))
+        (kill-line 1)
+        (yank)
+        (let ((next-line (point)))
+          (while
+              (re-search-forward
+               (format "^%s" (regexp-quote (car kill-ring))) nil t)
+            (replace-match "" nil nil))
+          (goto-char next-line))))))
+#+END_SRC
 
 *** Pallet
 
@@ -454,11 +507,26 @@ It takes time upon loading, so I dont usually tangle it.
                       ("C-c C-c M-t" . execute-extended-command)))
 #+END_SRC
 
+*** Coq
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'load-path "/usr/local/opt/coq/lib/emacs/site-lisp")
+(require 'coq)
+(custom-set-variables
+ '(proof-three-window-enable t))
 
+(setq auto-mode-alist (cons '("\\.v$" . coq-mode) auto-mode-alist))
+(autoload 'coq-mode "coq" "Major mode for editing Coq vernacular." t)
+
+(load-file ".emacs.d/ProofGeneral-4.2/generic/proof-site.el")
+#+END_SRC
+    
 * Finish Requirements
 All done with  =req-package=.
 #+BEGIN_SRC emacs-lisp
 (custom-set-variables
  '(haskell-process-log t))
 (req-package-finish)
+(load-file (let ((coding-system-for-read 'utf-8))
+                (shell-command-to-string "agda-mode locate")))
 #+END_SRC
+

@@ -11,7 +11,9 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(agda2-include-dirs (quote ("." "/Users/nrolland/clones/agda-stdlib/src")))
+ '(agda2-include-dirs
+   (quote
+    ("." "/Users/nrolland/clones/agda-stdlib/src" "/Users/nrolland/clones/HoTT-Agda/lib")))
  '(aquamacs-additional-fontsets nil t)
  '(aquamacs-autoface-mode nil)
  '(aquamacs-customization-version-id 307 t)
