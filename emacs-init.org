@@ -202,9 +202,9 @@ Start using =req-package=
     (bind-key "C-c M-."  nil                          haskell-mode-map)
     (bind-key "C-c C-d" 'ac-haskell-process-popup-doc haskell-mode-map)
     (bind-key "C-c C-h" 'haskell-hoogle               haskell-mode-map)
-    (bind-key "<f8>"    'haskell-navigate-imports haskell-mode-map)
+    (bind-key "<f8>"    'haskell-navigate-imports     haskell-mode-map)
+    ;;(define-key haskell-mode-map (kbd "C-x C-s") 'haskell-mode-save-buffer)
     (define-key haskell-mode-map (kbd "SPC") 'haskell-mode-contextual-space)
-    (custom-set-variables '(haskell-tags-on-save t))
     (defun haskell-process-completions-at-point ()
       "A company-mode-compatible complete-at-point function."
       (-when-let (process (haskell-process))
@@ -228,7 +228,8 @@ Start using =req-package=
       (setq-local completion-at-point-functions '(haskell-process-completions-at-point)))
     (setq haskell-font-lock-symbols 'unicode)
     (setq haskell-literate-default 'tex)
-    (setq haskell-stylish-on-save t)
+    ;;when stylish-on-save enabled, the TAGS file is not generated..
+    (setq haskell-stylish-on-save nil)
     (setq haskell-tags-on-save t)
     (setq inferior-haskell-find-project-root nil)
     (add-hook 'inferior-haskell-mode-hook 'turn-on-comint-history)
@@ -258,6 +259,17 @@ Start using =req-package=
                              'structured-haskell-mode))
 
                              
+
+*** Yasnippets
+#+BEGIN_SRC emacs-lisp
+(require 'yasnippet)
+(setq yas-snippet-dirs
+      '("~/.emacs.d/snippets/" 
+        ))
+(setq-default yas-prompt-functions '(yas-ido-prompt yas-dropdown-prompt))
+(yas-global-mode 1) ;; or M-x yas-reload-all if you've started YASnippet 
+(require 'react-snippets)
+#+END_SRC
     
 *** Company
 Company is a text completion framework for Emacs. The name stands for

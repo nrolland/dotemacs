@@ -32,9 +32,9 @@
       (right-fringe)
       (fringe))))
  '(global-linum-mode t)
- '(haskell-process-log t)
  '(ns-tool-bar-display-mode (quote both) t)
  '(ns-tool-bar-size-mode nil t)
+ '(proof-three-window-enable t)
  '(shm-program-name "
     " t)
  '(visual-line-mode nil t))
