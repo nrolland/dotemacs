@@ -127,7 +127,7 @@ C-x k RET to go back to the (renamed) buffer The rename is equivalent to a shell
 
 http://www.emacswiki.org/emacs/BookmarkPlus#toc1
 #+BEGIN_SRC emacs-lisp
-;; (require 'bookmark+)
+(require 'bookmark+)
 #+END_SRC
 
 
@@ -145,7 +145,7 @@ http://www.emacswiki.org/emacs/BookmarkPlus#toc1
 This package provides visible, buffer local, bookmarks and the ability to jump forward and backward to the next bookmark.
 https://github.com/joodland/bm
 
-
+[[./doc/bm.png]]
 #+BEGIN_SRC emacs-lisp
 (require 'bm)
 (global-set-key (kbd "<C-f2>") 'bm-toggle)
