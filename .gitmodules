@@ -1,0 +1,3 @@
+[submodule "snippets/shnippet"]
+	path = snippets/shnippet
+	url = https://github.com/LukeHoersten/shnippet.git
