@@ -2,6 +2,7 @@
 (source marmalade)
 (source melpa)
 
+(depends-on "ac-etags")
 (depends-on "auctex")
 (depends-on "auto-complete")
 (depends-on "caml")

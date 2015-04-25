@@ -18,6 +18,7 @@
  '(aquamacs-autoface-mode nil)
  '(aquamacs-customization-version-id 307 t)
  '(aquamacs-tool-bar-user-customization nil t)
+ '(bmkp-last-as-first-bookmark-file "~/.emacs.d/bookmarks")
  '(default-frame-alist
     (quote
      ((tool-bar-lines . 0)
@@ -32,6 +33,7 @@
       (right-fringe)
       (fringe))))
  '(global-linum-mode t)
+ '(haskell-process-log t)
  '(ns-tool-bar-display-mode (quote both) t)
  '(ns-tool-bar-size-mode nil t)
  '(proof-three-window-enable t)

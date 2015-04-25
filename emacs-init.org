@@ -114,8 +114,160 @@ Start using =req-package=
 
 
 ** Configure modules 
- 
-*** persistent history
+
+*** Emacs settings
+This is to save-as a file.
+C-x C-j (dired-jump to current file) 
+R to rename the file (or dired-do-rename). 
+C-x k RET to go back to the (renamed) buffer The rename is equivalent to a shell mv, but will also update any open buffers.
+
+#+BEGIN_SRC emacs-lisp
+(require 'dired-x)
+#+END_SRC
+
+http://www.emacswiki.org/emacs/BookmarkPlus#toc1
+#+BEGIN_SRC emacs-lisp
+;; (require 'bookmark+)
+#+END_SRC
+
+
+
+
+http://www.emacswiki.org/emacs/BookmarkPlus#toc1
+#+BEGIN_SRC emacs-lisp
+(require 'helm-config)
+(helm-mode 1)
+(helm-adaptative-mode 1)
+(helm-autoresize-mode 1)
+#+END_SRC
+
+
+This package provides visible, buffer local, bookmarks and the ability to jump forward and backward to the next bookmark.
+https://github.com/joodland/bm
+
+
+#+BEGIN_SRC emacs-lisp
+(require 'bm)
+(global-set-key (kbd "<C-f2>") 'bm-toggle)
+(global-set-key (kbd "<f2>")   'bm-next)
+(global-set-key (kbd "<S-f2>") 'bm-previous)
+#+END_SRC
+
+
+Winner Mode has been included with GNU Emacs since version 20.
+
+Winner Mode is a global minor mode. When activated, it allows you to “undo” (and “redo”) 
+changes in the window configuration with the key commands ‘C-c left’ and ‘C-c right’ 
+http://www.emacswiki.org/emacs/WinnerMode
+
+
+#+BEGIN_SRC emacs-lisp
+ (when (fboundp 'winner-mode)
+  (winner-mode)
+  (global-set-key [f7] 'winner-undo)
+  (global-set-key [C-f7] 'winner-redo)
+  (global-set-key [f9] 'delete-other-windows)
+  (global-set-key [C-f9] 'delete-window))
+#+END_SRC
+
+This is to use the mouse-2 command on mac 
+#+BEGIN_SRC emacs-lisp
+(define-key key-translation-map (kbd "<C-mouse-1>") (kbd "<mouse-2>"))
+#+END_SRC
+
+
+
+#+BEGIN_SRC emacs-lisp
+(require 'dired-x)
+#+END_SRC
+
+
+#+BEGIN_SRC emacs-lisp
+(require 'cl)				; common lisp goodies, loop
+(global-linum-mode t)
+(add-to-list 'load-path (concat user-emacs-directory "config/"))
+
+(defconst user-init-dir
+  (cond ((boundp 'user-emacs-directory)
+         user-emacs-directory)
+        ((boundp 'user-init-directory)
+         user-init-directory)
+        (t "~/.emacs.d/")))
+
+(setq backup-directory-alist
+        `(("." . ,(expand-file-name
+                   (concat user-emacs-directory "backups")))))
+;; Save point position between sessions
+(require 'saveplace)
+(setq-default save-place t)
+(setq save-place-file (expand-file-name "places" user-emacs-directory))
+
+#+END_SRC
+
+Attention : environnement of emacs and shell is different
+with the following we can transfer. 
+
+exec-path-from-shell-initializ : This sets $MANPATH, $PATH and exec-path from your shell, but only on OS X.
+
+
+https://github.com/purcell/exec-path-from-shell
+
+#+BEGIN_SRC emacs-lisp
+(req-package exec-path-from-shell
+   :config
+       (when (memq window-system '(mac ns))
+          ( progn 
+            (add-to-list 'exec-path-from-shell-variables "NIX_GHC_VERSION")
+            (add-to-list 'exec-path-from-shell-variables "NIX_GHC")
+            (add-to-list 'exec-path-from-shell-variables "NIX_GHCPKG")
+            (add-to-list 'exec-path-from-shell-variables "NIX_GHC_DOCDIR")
+            (add-to-list 'exec-path-from-shell-variables "NIX_GHC_LIBDIR")
+            (exec-path-from-shell-initialize)
+           )
+       )
+)
+
+(setq visible-bell t)
+(setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time
+(setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
+(setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse    
+(setq scroll-step 1) ;; keyboard scroll one line at a time
+
+(require 'better-defaults)
+
+;;(setq default-directory "~/") 
+(setq inhibit-splash-screen t)		; no splash screen, thanks
+(line-number-mode 1)			; have line numbers and
+(column-number-mode 1)			; column numbers in the mode line
+(tool-bar-mode -1)			; no tool bar with icons
+(unless (string-match "apple-darwin" system-configuration)
+  ;; on mac, there's always a menu bar drown, don't have it empty
+  (menu-bar-mode -1))
+#+END_SRC
+
+If you've Emacs 24.4 the cleanest way to do it would be the new feature exposed delete-duplicate-lines
+#+BEGIN_SRC
+(defun uniq-lines (beg end)
+  "Unique lines in region.
+Called from a program, there are two arguments:
+BEG and END (region to sort)."
+  (interactive "r")
+  (save-excursion
+    (save-restriction
+      (narrow-to-region beg end)
+      (goto-char (point-min))
+      (while (not (eobp))
+        (kill-line 1)
+        (yank)
+        (let ((next-line (point)))
+          (while
+              (re-search-forward
+               (format "^%s" (regexp-quote (car kill-ring))) nil t)
+            (replace-match "" nil nil))
+          (goto-char next-line))))))
+#+END_SRC
+
+Persistent history
 #+BEGIN_SRC emacs-lisp
 (defun comint-write-history-on-exit (process event)
   (comint-write-input-ring)
@@ -184,7 +336,7 @@ Start using =req-package=
 *** Haskell mode
 #+BEGIN_SRC emacs-lisp
 (req-package haskell-mode
-  :require (flycheck flycheck-haskell)
+  :require (flycheck flycheck-haskell haskell-process)
   :commands haskell-mode
   :init
   (add-to-list 'auto-mode-alist '("\\.l?hs$" . haskell-mode))
@@ -225,6 +377,7 @@ Start using =req-package=
       (turn-on-haskell-decl-scan)
       (local-set-key "\C-cl" 'hs-lint)
       (setq evil-auto-indent nil)
+      (setq haskell-hoogle-command "hoogle --info --color")
       (setq-local completion-at-point-functions '(haskell-process-completions-at-point)))
     (setq haskell-font-lock-symbols 'unicode)
     (setq haskell-literate-default 'tex)
@@ -233,6 +386,7 @@ Start using =req-package=
     (setq haskell-tags-on-save t)
     (setq inferior-haskell-find-project-root nil)
     (add-hook 'inferior-haskell-mode-hook 'turn-on-comint-history)
+    (add-hook 'haskell-mode-hook 'turn-on-comint-history)
     (add-hook 'haskell-mode-hook 'my-haskell-hook)))
 
 (req-package flycheck-haskell
@@ -260,11 +414,21 @@ Start using =req-package=
 
                              
 
+*** Purescript
+(projectile-global-mode)
+(req-package purescript-mode
+             :init  (add-hook 'purescript-mode-hook 'inferior-psci-mode))
+(require 'repl-toggle)
+(require 'psci)
+(add-to-list 'rtog/mode-repl-alist '(purescript-mode . psci))
+
+
 *** Yasnippets
 #+BEGIN_SRC emacs-lisp
 (require 'yasnippet)
 (setq yas-snippet-dirs
       '("~/.emacs.d/snippets/" 
+        "~/.emacs.d/snippets/shnippet"
         ))
 (setq-default yas-prompt-functions '(yas-ido-prompt yas-dropdown-prompt))
 (yas-global-mode 1) ;; or M-x yas-reload-all if you've started YASnippet 
@@ -368,129 +532,6 @@ dynamically.
             ("register"  . font-lock-type-face))))
 #+END_SRC
 
-*** Emacs settings
-This is to save-as a file.
-C-x C-j (dired-jump to current file) 
-R to rename the file (or dired-do-rename). 
-C-x k RET to go back to the (renamed) buffer The rename is equivalent to a shell mv, but will also update any open buffers.
-
-#+BEGIN_SRC emacs-lisp
-(require 'dired-x)
-#+END_SRC
-
-
-Winner Mode has been included with GNU Emacs since version 20.
-
-Winner Mode is a global minor mode. When activated, it allows you to “undo” (and “redo”) 
-changes in the window configuration with the key commands ‘C-c left’ and ‘C-c right’ 
-http://www.emacswiki.org/emacs/WinnerMode
-
-
-#+BEGIN_SRC emacs-lisp
- (when (fboundp 'winner-mode)
-  (winner-mode)
-  (global-set-key [f7] 'winner-undo)
-  (global-set-key [C-f7] 'winner-redo)
-  (global-set-key [f9] 'delete-other-windows)
-  (global-set-key [C-f9] 'delete-window))
-#+END_SRC
-
-This is to use the mouse-2 command on mac 
-#+BEGIN_SRC emacs-lisp
-(define-key key-translation-map (kbd "<C-mouse-1>") (kbd "<mouse-2>"))
-#+END_SRC
-
-
-
-#+BEGIN_SRC emacs-lisp
-(require 'dired-x)
-#+END_SRC
-
-
-#+BEGIN_SRC emacs-lisp
-(require 'cl)				; common lisp goodies, loop
-(global-linum-mode t)
-(add-to-list 'load-path (concat user-emacs-directory "config/"))
-
-(defconst user-init-dir
-  (cond ((boundp 'user-emacs-directory)
-         user-emacs-directory)
-        ((boundp 'user-init-directory)
-         user-init-directory)
-        (t "~/.emacs.d/")))
-
-(setq backup-directory-alist
-        `(("." . ,(expand-file-name
-                   (concat user-emacs-directory "backups")))))
-;; Save point position between sessions
-(require 'saveplace)
-(setq-default save-place t)
-(setq save-place-file (expand-file-name "places" user-emacs-directory))
-
-#+END_SRC
-
-Attention : environnement of emacs and shell is different
-with the following we can transfer. 
-
-exec-path-from-shell-initializ : This sets $MANPATH, $PATH and exec-path from your shell, but only on OS X.
-
-
-https://github.com/purcell/exec-path-from-shell
-
-#+BEGIN_SRC emacs-lisp
-(req-package exec-path-from-shell
-   :config
-       (when (memq window-system '(mac ns))
-          ( progn 
-            (add-to-list 'exec-path-from-shell-variables "NIX_GHC_VERSION")
-            (add-to-list 'exec-path-from-shell-variables "NIX_GHC")
-            (add-to-list 'exec-path-from-shell-variables "NIX_GHCPKG")
-            (add-to-list 'exec-path-from-shell-variables "NIX_GHC_DOCDIR")
-            (add-to-list 'exec-path-from-shell-variables "NIX_GHC_LIBDIR")
-            (exec-path-from-shell-initialize)
-           )
-       )
-)
-
-(setq visible-bell t)
-(setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time
-(setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
-(setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse    
-(setq scroll-step 1) ;; keyboard scroll one line at a time
-
-(require 'better-defaults)
-
-(setq default-directory "~/") 
-(setq inhibit-splash-screen t)		; no splash screen, thanks
-(line-number-mode 1)			; have line numbers and
-(column-number-mode 1)			; column numbers in the mode line
-(tool-bar-mode -1)			; no tool bar with icons
-(unless (string-match "apple-darwin" system-configuration)
-  ;; on mac, there's always a menu bar drown, don't have it empty
-  (menu-bar-mode -1))
-#+END_SRC
-
-If you've Emacs 24.4 the cleanest way to do it would be the new feature exposed delete-duplicate-lines
-#+BEGIN_SRC
-(defun uniq-lines (beg end)
-  "Unique lines in region.
-Called from a program, there are two arguments:
-BEG and END (region to sort)."
-  (interactive "r")
-  (save-excursion
-    (save-restriction
-      (narrow-to-region beg end)
-      (goto-char (point-min))
-      (while (not (eobp))
-        (kill-line 1)
-        (yank)
-        (let ((next-line (point)))
-          (while
-              (re-search-forward
-               (format "^%s" (regexp-quote (car kill-ring))) nil t)
-            (replace-match "" nil nil))
-          (goto-char next-line))))))
-#+END_SRC
 
 *** Pallet
 
@@ -504,9 +545,10 @@ It takes time upon loading, so I dont usually tangle it.
 (req-package pallet
   :config
   (progn
-    (pallet-install)))
+    (pallet-install)
+    (pallet-mode t)))
 #+END_SRC
-    
+
 *** Smex
 [[https://github.com/nonsequitur/smex][Smex]] brings ido searching to =M-x=.
 
@@ -529,7 +571,7 @@ It takes time upon loading, so I dont usually tangle it.
 (setq auto-mode-alist (cons '("\\.v$" . coq-mode) auto-mode-alist))
 (autoload 'coq-mode "coq" "Major mode for editing Coq vernacular." t)
 
-(load-file ".emacs.d/ProofGeneral-4.2/generic/proof-site.el")
+(load-file "~/.emacs.d/ProofGeneral-4.2/generic/proof-site.el")
 #+END_SRC
     
 * Finish Requirements
@@ -542,3 +584,23 @@ All done with  =req-package=.
                 (shell-command-to-string "agda-mode locate")))
 #+END_SRC
 
+*** Flow
+From http://lbolla.info/blog/2014/11/19/flycheck-checker-for-javascript-flow
+#+BEGIN_SRC emacs-lisp
+(flycheck-define-checker javascript-flow
+  "A JavaScript syntax and style checker using Flow.
+
+See URL `http://flowtype.org/'."
+  :command ("flow" source-original)
+  :error-patterns
+  ((error line-start
+	  (file-name)
+	  ":"
+	  line
+	  ":"
+	  (minimal-match (one-or-more not-newline))
+	  ": "
+	  (message (minimal-match (and (one-or-more anything) "\n")))
+	  line-end))
+          :modes js-mode)
+#+END_SRC
