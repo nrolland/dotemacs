@@ -47,7 +47,7 @@ Cask is initialized in =init.el= with the following:
 
 *** install Packages  
 - Install [[https://github.com/cask/cask][Cask]].
-- Run =cask install= in =$HOME/.emacs.d/=.
+- Run =cask install= in =$HOME/.emacs.d/=. to install all the packages mentioned here
 - We require Cask after loading the dependency management system
 - This should also install req-package
   
@@ -113,73 +113,9 @@ Start using =req-package=
 
 
 
-** Configure modules 
+* Configure modules 
 
-*** Emacs settings
-This is to save-as a file.
-C-x C-j (dired-jump to current file) 
-R to rename the file (or dired-do-rename). 
-C-x k RET to go back to the (renamed) buffer The rename is equivalent to a shell mv, but will also update any open buffers.
-
-#+BEGIN_SRC emacs-lisp
-(require 'dired-x)
-#+END_SRC
-
-http://www.emacswiki.org/emacs/BookmarkPlus#toc1
-#+BEGIN_SRC emacs-lisp
-(require 'bookmark+)
-#+END_SRC
-
-
-
-
-http://www.emacswiki.org/emacs/BookmarkPlus#toc1
-#+BEGIN_SRC emacs-lisp
-(require 'helm-config)
-(helm-mode 1)
-(helm-adaptative-mode 1)
-(helm-autoresize-mode 1)
-#+END_SRC
-
-
-This package provides visible, buffer local, bookmarks and the ability to jump forward and backward to the next bookmark.
-https://github.com/joodland/bm
-
-[[./doc/bm.png]]
-#+BEGIN_SRC emacs-lisp
-(require 'bm)
-(global-set-key (kbd "<C-f2>") 'bm-toggle)
-(global-set-key (kbd "<f2>")   'bm-next)
-(global-set-key (kbd "<S-f2>") 'bm-previous)
-#+END_SRC
-
-
-Winner Mode has been included with GNU Emacs since version 20.
-
-Winner Mode is a global minor mode. When activated, it allows you to “undo” (and “redo”) 
-changes in the window configuration with the key commands ‘C-c left’ and ‘C-c right’ 
-http://www.emacswiki.org/emacs/WinnerMode
-
-
-#+BEGIN_SRC emacs-lisp
- (when (fboundp 'winner-mode)
-  (winner-mode)
-  (global-set-key [f7] 'winner-undo)
-  (global-set-key [C-f7] 'winner-redo)
-  (global-set-key [f9] 'delete-other-windows)
-  (global-set-key [C-f9] 'delete-window))
-#+END_SRC
-
-This is to use the mouse-2 command on mac 
-#+BEGIN_SRC emacs-lisp
-(define-key key-translation-map (kbd "<C-mouse-1>") (kbd "<mouse-2>"))
-#+END_SRC
-
-
-
-#+BEGIN_SRC emacs-lisp
-(require 'dired-x)
-#+END_SRC
+*** Set directories 
 
 
 #+BEGIN_SRC emacs-lisp
@@ -203,7 +139,10 @@ This is to use the mouse-2 command on mac
 (setq save-place-file (expand-file-name "places" user-emacs-directory))
 
 #+END_SRC
+    
 
+
+*** Exec path from shell and other settings
 Attention : environnement of emacs and shell is different
 with the following we can transfer. 
 
@@ -244,7 +183,21 @@ https://github.com/purcell/exec-path-from-shell
   ;; on mac, there's always a menu bar drown, don't have it empty
   (menu-bar-mode -1))
 #+END_SRC
+*** Key bindings
+    SCHEDULED: <2014-09-14 Sun>
+#+BEGIN_SRC emacs-lisp
+;; default key to switch buffer is C-x b, but that's not easy enough
+;; when you do that, to kill emacs either close its frame from the window
+;; manager or do M-x kill-emacs.  Don't need a nice shortcut for a once a
+;; week (or day) action.
 
+(global-set-key (kbd "C-x f")  'ido-find-file)
+(global-set-key (kbd "C-l")  'kill-whole-line)
+(global-set-key (kbd "C-x C-b") 'ido-switch-buffer)
+(global-set-key (kbd "C-x B") 'ibuffer)
+#+END_SRC
+
+*** some example functions
 If you've Emacs 24.4 the cleanest way to do it would be the new feature exposed delete-duplicate-lines
 #+BEGIN_SRC
 (defun uniq-lines (beg end)
@@ -266,6 +219,7 @@ BEG and END (region to sort)."
             (replace-match "" nil nil))
           (goto-char next-line))))))
 #+END_SRC
+
 
 Persistent history
 #+BEGIN_SRC emacs-lisp
@@ -298,6 +252,117 @@ Persistent history
 (add-hook 'kill-emacs-hook 'comint-write-input-ring-all-buffers)
 #+END_SRC
 
+*** Projectile
+
+Project interaction library for Emacs
+https://github.com/bbatsov/projectile
+#+BEGIN_SRC emacs-lisp
+(req-package projectile
+  :config
+    (progn (projectile-global-mode)
+           ;;(print "gotham theme is here and installed from el-get")
+    )
+)
+
+(req-package helm-projectile
+  :require (helm-config projectile) 
+  :config
+    (progn (helm-projectile-on) ;;replace normal projectile command with helm enabled ones cf doc
+           ;;(print "gotham theme is here and installed from el-get")
+    )
+)
+#+END_SRC
+
+
+*** Perspective
+
+tagged workspaces in Emacs, similar to workspaces in windows managers such as Awesome and XMonad
+https://github.com/nex3/perspective-el
+Commands are all prefixed by C-x x.
+s -- persp-switch: Query a perspective to switch or create
+k -- persp-remove-buffer: Query a buffer to remove from current perspective
+c -- persp-kill : Query a perspective to kill
+r -- persp-rename: Rename current perspective
+a -- persp-add-buffer: Querry an open buffer to add to current perspective
+A -- persp-set-buffer: Add buffer to current perspective and remove it from all others
+i -- persp-import: Import a given perspective from another frame.
+n, <right> -- persp-next : Switch to next perspective
+p, <left> -- persp-prev: Switch to previous perspective
+
+#+BEGIN_SRC emacs-lisp
+(req-package perspective
+  :config
+   ;;(progn persp-mode))  ;;does not work
+   (progn (persp-mode)
+   )
+)
+#+END_SRC
+
+*** Helm
+Helm is incremental completion and selection narrowing framework for Emacs
+https://tuhdo.github.io/helm-intro.html
+#+BEGIN_SRC emacs-lisp
+(req-package helm-config
+  :config
+  (add-hook 'after-init-hook (lambda () (progn (helm-mode 1)
+                                               (helm-adaptative-mode 1 )
+                                               (helm-autoresize-mode 1)
+                                        )
+                             )
+   ))
+#+END_SRC
+
+*** BM - Bookmark in files
+This package provides visible, buffer local, bookmarks and the ability to jump forward and backward to the next bookmark.
+https://github.com/joodland/bm
+
+[[./doc/bm.png]]
+#+BEGIN_SRC emacs-lisp
+(require 'bm)
+(global-set-key (kbd "<C-f2>") 'bm-toggle)
+(global-set-key (kbd "<f2>")   'bm-next)
+(global-set-key (kbd "<S-f2>") 'bm-previous)
+#+END_SRC
+
+
+*** Winner mode - undo 
+
+Winner Mode has been included with GNU Emacs since version 20.
+
+Winner Mode is a global minor mode. When activated, it allows you to “undo” (and “redo”) 
+changes in the window configuration with the key commands ‘C-c left’ and ‘C-c right’ 
+http://www.emacswiki.org/emacs/WinnerMode
+
+
+#+BEGIN_SRC emacs-lisp
+ (when (fboundp 'winner-mode)
+  (winner-mode)
+  (global-set-key [f7] 'winner-undo)
+  (global-set-key [C-f7] 'winner-redo)
+  (global-set-key [f9] 'delete-other-windows)
+  (global-set-key [C-f9] 'delete-window))
+#+END_SRC
+
+*** Mac stuff
+This is to use the mouse-2 command on mac 
+#+BEGIN_SRC emacs-lisp
+(define-key key-translation-map (kbd "<C-mouse-1>") (kbd "<mouse-2>"))
+#+END_SRC
+
+
+*** Dired
+This is to save-as a file.
+C-x C-j (dired-jump to current file) 
+R to rename the file (or dired-do-rename). 
+C-x k RET to go back to the (renamed) buffer The rename is equivalent to a shell mv, but will also update any open buffers.
+
+
+#+BEGIN_SRC emacs-lisp
+(require 'dired-x)
+#+END_SRC
+
+
+
 *** Flycheck
     Not sure what to do with this.
     I think it causes issues (find spinning at every save)
@@ -322,7 +387,7 @@ Persistent history
 #+END_SRC
 
 
-*** auto-complete
+*** ac auto-complete
 #+BEGIN_SRC emacs-lisp
 (req-package ac-haskell-process
    :require auto-complete
@@ -415,7 +480,9 @@ Persistent history
                              
 
 *** Purescript
-(projectile-global-mode)
+
+
+
 (req-package purescript-mode
              :init  (add-hook 'purescript-mode-hook 'inferior-psci-mode))
 (require 'repl-toggle)
@@ -498,19 +565,7 @@ Expand region increases the selected region by semantic units. Just keep pressin
     :bind ("C-=" . er/expand-region ))
 #+END_SRC
 
-*** Key bindings
-    SCHEDULED: <2014-09-14 Sun>
-#+BEGIN_SRC emacs-lisp
-;; default key to switch buffer is C-x b, but that's not easy enough
-;; when you do that, to kill emacs either close its frame from the window
-;; manager or do M-x kill-emacs.  Don't need a nice shortcut for a once a
-;; week (or day) action.
 
-(global-set-key (kbd "C-x f")  'ido-find-file)
-(global-set-key (kbd "C-l")  'kill-whole-line)
-(global-set-key (kbd "C-x C-b") 'ido-switch-buffer)
-(global-set-key (kbd "C-x B") 'ibuffer)
-#+END_SRC
 
 
 *** Guide-key
@@ -574,17 +629,23 @@ It takes time upon loading, so I dont usually tangle it.
 (load-file "~/.emacs.d/ProofGeneral-4.2/generic/proof-site.el")
 #+END_SRC
     
+
+*** Bookmarkplus 
+
+http://www.emacswiki.org/emacs/BookmarkPlus#toc1
+#+BEGIN_SRC emacs-lisp
+(require 'bookmark+)
+#+END_SRC
+
 * Finish Requirements
 All done with  =req-package=.
 #+BEGIN_SRC emacs-lisp
-(custom-set-variables
- '(haskell-process-log t))
 (req-package-finish)
 (load-file (let ((coding-system-for-read 'utf-8))
                 (shell-command-to-string "agda-mode locate")))
 #+END_SRC
 
-*** Flow
+** Flow
 From http://lbolla.info/blog/2014/11/19/flycheck-checker-for-javascript-flow
 #+BEGIN_SRC emacs-lisp
 (flycheck-define-checker javascript-flow

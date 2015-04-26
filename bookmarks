@@ -2,22 +2,31 @@
 ;;; This format is meant to be slightly human-readable;
 ;;; nevertheless, you probably don't want to edit it.
 ;;; -*- End Of Bookmark File Format Version Stamp -*-
-(#1=(#("emacs config" 0 12
+(#1=(#("init.el" 0 7
       (bmkp-full-record #1#))
+    (time 21820 42143 665999 0)
+    (visits . 2)
+    (filename . "~/.emacs.d/init.el")
+    (front-context-string . "\n;; Load customi")
+    (rear-context-string . "ask-initialize)\n")
+    (position . 1052))
+#1=(#("emacs config" 0 12
+      (bmkp-full-record #1#))
+    (end-position . 12420)
     (filename . "~/.emacs.d/emacs-init.org")
     (buffer-name . "emacs-init.org")
     (front-context-string . "\nThis is to save")
     (rear-context-string . "* Emacs settings")
     (front-context-region-string)
     (rear-context-region-string)
-    (visits . 0)
-    (time . #2=(21819 24270 707409 0))
-    (created . #2#)
-    (position . 3235))
+    (visits . 5)
+    (time 21820 42060 991001 0)
+    (created 21819 24270 707409 0)
+    (position . 12420))
 #1=(#("typeFamilies" 0 12
       (bmkp-full-record #1#))
-    (time 21819 24891 221007 0)
-    (visits . 1)
+    (time 21820 39371 656486 0)
+    (visits . 3)
     (filename . "~/hask/gist/FlexibilityWithPokemon1.hs")
     (front-context-string . "Move fire\n  move")
     (rear-context-string . " show $ pickFire")
