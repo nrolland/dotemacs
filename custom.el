@@ -18,7 +18,7 @@
  '(aquamacs-autoface-mode nil)
  '(aquamacs-customization-version-id 307 t)
  '(aquamacs-tool-bar-user-customization nil t)
- '(bmkp-last-as-first-bookmark-file "~/.emacs.d/bookmarks")
+ '(bmkp-last-as-first-bookmark-file "~/hask/gist/bookmark")
  '(default-frame-alist
     (quote
      ((tool-bar-lines . 0)
@@ -37,6 +37,7 @@
  '(ns-tool-bar-display-mode (quote both) t)
  '(ns-tool-bar-size-mode nil t)
  '(proof-three-window-enable t)
+ '(server-mode t)
  '(shm-program-name "
     " t)
  '(visual-line-mode nil t))

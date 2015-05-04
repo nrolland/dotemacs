@@ -2,10 +2,36 @@
 ;;; This format is meant to be slightly human-readable;
 ;;; nevertheless, you probably don't want to edit it.
 ;;; -*- End Of Bookmark File Format Version Stamp -*-
-(#1=(#("init.el" 0 7
+(#1=(#("Agregate.hs" 0 11
       (bmkp-full-record #1#))
-    (time 21820 42143 665999 0)
-    (visits . 2)
+    (annotation)
+    (tags "fold" "cqrs")
+    (buffer-name . "gist")
+    (front-context-string . "bookmark\n  -rw-r")
+    (rear-context-string . "09 Apr 26 13:42 ")
+    (front-context-region-string)
+    (rear-context-region-string)
+    (visits . 1)
+    (time 21820 53097 200450 0)
+    (created 21820 53064 200319 0)
+    (position . 733)
+    (filename . "/Users/nrolland/hask/gist/")
+    (dired-directory . "~/hask/gist/")
+    (dired-marked)
+    (dired-switches . "-al")
+    (dired-subdirs)
+    (dired-hidden-dirs)
+    (handler . bmkp-jump-dired))
+#1=(#("FlexibilityWithReferentialData.hs" 0 33
+      (bmkp-full-record #1#))
+    (tags "toto" "TypeFamilies")
+    (filename . "/Users/nrolland/hask/gist/FlexibilityWithReferentialData.hs")
+    (position . 0)
+    (created 21820 51571 388066 0))
+#1=(#("init.el" 0 7
+      (bmkp-full-record #1#))
+    (time 21820 51322 556217 0)
+    (visits . 4)
     (filename . "~/.emacs.d/init.el")
     (front-context-string . "\n;; Load customi")
     (rear-context-string . "ask-initialize)\n")
@@ -19,8 +45,8 @@
     (rear-context-string . "* Emacs settings")
     (front-context-region-string)
     (rear-context-region-string)
-    (visits . 5)
-    (time 21820 42060 991001 0)
+    (visits . 9)
+    (time 21820 52326 50096 0)
     (created 21819 24270 707409 0)
     (position . 12420))
 #1=(#("typeFamilies" 0 12
