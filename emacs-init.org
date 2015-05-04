@@ -252,6 +252,21 @@ Persistent history
 (add-hook 'kill-emacs-hook 'comint-write-input-ring-all-buffers)
 #+END_SRC
 
+*** fixing backspace in C-s
+#+BEGIN_SRC emacs-lisp
+(defun mydelete ()
+  "Delete the failed portion of the search string, or the last char if successful."
+  (interactive)
+  (with-isearch-suspended
+      (setq isearch-new-string
+            (substring
+             isearch-string 0 (or (isearch-fail-pos) (1- (length isearch-string))))
+            isearch-new-message
+            (mapconcat 'isearch-text-char-description isearch-new-string ""))))
+
+(define-key isearch-mode-map (kbd "<backspace>") 'mydelete)
+#+END_SRC
+
 *** Projectile
 
 Project interaction library for Emacs
@@ -346,6 +361,7 @@ http://www.emacswiki.org/emacs/WinnerMode
 *** Mac stuff
 This is to use the mouse-2 command on mac 
 #+BEGIN_SRC emacs-lisp
+(set-keyboard-coding-system nil)
 (define-key key-translation-map (kbd "<C-mouse-1>") (kbd "<mouse-2>"))
 #+END_SRC
 
@@ -361,7 +377,74 @@ C-x k RET to go back to the (renamed) buffer The rename is equivalent to a shell
 (require 'dired-x)
 #+END_SRC
 
+*** popwin
 
+popwin mode configuration working with helm
+https://gist.github.com/syl20bnr/5516054
+#+BEGIN_SRC emacs-lisp
+(require 'popwin)
+(popwin-mode 1)
+(setq display-buffer-function 'popwin:display-buffer)
+(push '("^\*helm .+\*$" :regexp t) popwin:special-display-config)
+(push '("^\*helm-.+\*$" :regexp t) popwin:special-display-config)
+#+END_SRC
+
+
+
+*** org-languages
+#+BEGIN_SRC emacs-lisp
+(require 'ob-clojure)
+(require 'ob-sh)
+(require 'ob-perl)
+(require 'ob-haskell)
+;;(require 'ox-reveal)
+
+
+(defun sh-send-line-or-region (&optional step)
+  (interactive ())
+  (let ((proc (get-process "shell"))
+        pbuf min max command)
+    (unless proc
+      (let ((currbuff (current-buffer)))
+        (shell)
+        (switch-to-buffer currbuff)
+        (setq proc (get-process "shell"))
+        ))
+    (setq pbuff (process-buffer proc))
+    (if (use-region-p)
+        (setq min (region-beginning)
+              max (region-end))
+      (setq min (point-at-bol)
+            max (point-at-eol)))
+    (setq command (concat (buffer-substring min max) "\n"))
+    (with-current-buffer pbuff
+      (goto-char (process-mark proc))
+      (insert command)
+      (move-marker (process-mark proc) (point))
+      ) ;;pop-to-buffer does not work with save-current-buffer -- bug?
+    (process-send-string  proc command)
+    (display-buffer (process-buffer proc) t)
+    (when step 
+      (goto-char max)
+      (next-line))
+    ))
+
+(defun sh-send-line-or-region-and-step ()
+  (interactive)
+  (sh-send-line-or-region t))
+(defun sh-switch-to-process-buffer ()
+  (interactive)
+  (pop-to-buffer (process-buffer (get-process "shell")) t))
+
+(defun my-reloadEmacsConfig() 
+  (interactive)
+  (find-file (expand-file-name
+                   (concat user-emacs-directory "init.el")))
+  (eval-buffer)
+)
+
+
+#+END_SRC
 
 *** Flycheck
     Not sure what to do with this.
@@ -480,8 +563,6 @@ C-x k RET to go back to the (renamed) buffer The rename is equivalent to a shell
                              
 
 *** Purescript
-
-
 
 (req-package purescript-mode
              :init  (add-hook 'purescript-mode-hook 'inferior-psci-mode))
@@ -639,9 +720,19 @@ It takes time upon loading, so I dont usually tangle it.
 #+END_SRC
     
 
+*** Remember mode
+
+save bookmark into a org file
+(require 'remember)
 *** Bookmarkplus 
 
 http://www.emacswiki.org/emacs/BookmarkPlus#toc1
+
+Most commands pertaining to tags are by default on prefix key ‘C-x p t’ — use ‘C-x p t C-h’ to see them. 
+In buffer ‘*Bookmark List*’, commands pertaining to tags are on prefix key ‘T’ — use ‘T C-h’ to see them. 
+And remember that you can use `C-h >’ to describe all of the marked bookmarks, in the current sort order. 
+The bookmark descriptions include the tags.
+
 #+BEGIN_SRC emacs-lisp
 (require 'bookmark+)
 #+END_SRC
