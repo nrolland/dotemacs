@@ -33,6 +33,7 @@
       (right-fringe)
       (fringe))))
  '(global-linum-mode t)
+ '(haskell-hoogle-command "hoogle")
  '(haskell-process-log t)
  '(ns-tool-bar-display-mode (quote both) t)
  '(ns-tool-bar-size-mode nil t)

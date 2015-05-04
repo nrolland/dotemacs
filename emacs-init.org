@@ -545,6 +545,15 @@ For more information, type M-x describe-function RET company-mode.
              :bind (("C-c C->" . mc/mark-next-like-this)
                     ("C-c C-<" . mc/mark-previous-like-this)
                     ( "C-c c s" . mc/mark-all-like-this)))
+(defun dos2unix ()
+  "Convert a DOS formatted text buffer to UNIX format"
+  (interactive)
+  (set-buffer-file-coding-system 'undecided-unix nil))
+(defun unix2dos ()
+  "Convert a UNIX formatted text buffer to DOS format"
+  (interactive)
+  (set-buffer-file-coding-system 'undecided-dos nil))
+
 #+END_SRC
 
 *** IDO  : Interactively Do Things
