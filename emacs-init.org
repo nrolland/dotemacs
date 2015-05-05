@@ -196,6 +196,11 @@ https://github.com/purcell/exec-path-from-shell
 (global-set-key (kbd "C-x C-b") 'ido-switch-buffer)
 (global-set-key (kbd "C-x B") 'ibuffer)
 #+END_SRC
+    
+*** Server emacs
+(require 'server)
+(or (server-running-p)
+    (server-start))
 
 *** some example functions
 If you've Emacs 24.4 the cleanest way to do it would be the new feature exposed delete-duplicate-lines
@@ -563,13 +568,13 @@ https://gist.github.com/syl20bnr/5516054
                              
 
 *** Purescript
-
+#+BEGIN_SRC emacs-lisp
 (req-package purescript-mode
-             :init  (add-hook 'purescript-mode-hook 'inferior-psci-mode))
+             :config  (add-hook 'purescript-mode-hook 'inferior-psci-mode))
 (require 'repl-toggle)
 (require 'psci)
 (add-to-list 'rtog/mode-repl-alist '(purescript-mode . psci))
-
+#+END_SRC
 
 *** Yasnippets
 #+BEGIN_SRC emacs-lisp

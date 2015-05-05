@@ -38,7 +38,9 @@
  '(ns-tool-bar-display-mode (quote both) t)
  '(ns-tool-bar-size-mode nil t)
  '(proof-three-window-enable t)
- '(server-mode t)
+ '(purescript-mode-hook
+   (quote
+    (turn-on-purescript-simple-indent inferior-psci-mode)))
  '(shm-program-name "
     " t)
  '(visual-line-mode nil t))
