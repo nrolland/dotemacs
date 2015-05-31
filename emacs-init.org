@@ -142,6 +142,24 @@ Start using =req-package=
     
 
 
+*** multiple cursors
+
+https://github.com/magnars/multiple-cursors.el
+
+
+#+BEGIN_SRC emacs-lisp
+(require 'multiple-cursors)
+(global-set-key (kbd "C->") 'mc/mark-next-like-this)
+(global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
+(global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
+#+END_SRC
+
+First mark the word, then add more cursors.
+
+To get out of multiple-cursors-mode, press <return> or C-g. The latter will first disable
+ multiple regions before disabling multiple cursors. If you want to insert a newline in 
+multiple-cursors-mode, use C-j.
+
 *** Exec path from shell and other settings
 Attention : environnement of emacs and shell is different
 with the following we can transfer. 
@@ -156,11 +174,14 @@ https://github.com/purcell/exec-path-from-shell
    :config
        (when (memq window-system '(mac ns))
           ( progn 
-            (add-to-list 'exec-path-from-shell-variables "NIX_GHC_VERSION")
+            (add-to-list 'exec-path-from-shell-variables "NIX_PATH")
             (add-to-list 'exec-path-from-shell-variables "NIX_GHC")
+            (add-to-list 'exec-path-from-shell-variables "NIX_GHC_VERSION")
             (add-to-list 'exec-path-from-shell-variables "NIX_GHCPKG")
             (add-to-list 'exec-path-from-shell-variables "NIX_GHC_DOCDIR")
             (add-to-list 'exec-path-from-shell-variables "NIX_GHC_LIBDIR")
+            (add-to-list 'exec-path-from-shell-variables "NIX_CFLAGS_COMPILE")
+            (add-to-list 'exec-path-from-shell-variables "NIX_LDFLAGS")
             (exec-path-from-shell-initialize)
            )
        )
@@ -183,6 +204,12 @@ https://github.com/purcell/exec-path-from-shell
   ;; on mac, there's always a menu bar drown, don't have it empty
   (menu-bar-mode -1))
 #+END_SRC
+*** recent files 
+(require 'recentf)
+(setq recentf-max-saved-items 200
+      recentf-max-menu-items 15)
+(recentf-mode +1)
+
 *** Key bindings
     SCHEDULED: <2014-09-14 Sun>
 #+BEGIN_SRC emacs-lisp
@@ -269,8 +296,8 @@ Persistent history
             isearch-new-message
             (mapconcat 'isearch-text-char-description isearch-new-string ""))))
 
-(define-key isearch-mode-map (kbd "<backspace>") 'mydelete)
 #+END_SRC
+(define-key isearch-mode-map (kbd "<backspace>") 'mydelete)
 
 *** Projectile
 
