@@ -840,8 +840,11 @@ The bookmark descriptions include the tags.
 All done with  =req-package=.
 #+BEGIN_SRC emacs-lisp
 (req-package-finish)
-(load-file (let ((coding-system-for-read 'utf-8))
+(condition-case nil
+    (load-file (let ((coding-system-for-read 'utf-8))
                 (shell-command-to-string "agda-mode locate")))
+  (error nil))
+
 #+END_SRC
 
 ** Flow
