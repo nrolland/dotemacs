@@ -643,9 +643,14 @@ https://gist.github.com/syl20bnr/5516054
 (setq shm-program-name  "/Users/nrolland/.emacs.d/structured-haskell-mode/dist/build/structured-haskell-mode/structured-haskell-mode")
 
 (req-package ghc
-  :init (add-hook 'haskell-mode-hook (lambda () (progn (ghc-init)
-                                                       (turn-on-haskell-indent)
-                                                )
+  :init (add-hook 'haskell-mode-hook (lambda () 
+                                      (progn (print   (shell-command-to-string "ghc --numeric-version") )
+                                             (when (string= (shell-command-to-string "ghc --numeric-version") "7.8.4")
+                                                   (progn (ghc-init)
+                                                          (turn-on-haskell-indent)
+                                                   )
+                                             )
+                                      )
                                      )
         ))
 
