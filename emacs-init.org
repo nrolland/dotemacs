@@ -669,6 +669,7 @@ https://gist.github.com/syl20bnr/5516054
 
                              
 *** Dash-haskell
+#+BEGIN_SRC emacs-lisp
 (defun activate-package-docsets (root) 
 (progn
    (setq helm-dash-docsets-path root) 
@@ -678,7 +679,7 @@ https://gist.github.com/syl20bnr/5516054
     (format "activated %d docsets from: %s" 
       (length helm-dash-common-docsets) root))
 ))
-
+#+END_SRC
 
 *** Purescript
 #+BEGIN_SRC emacs-lisp
