@@ -670,6 +670,7 @@ https://gist.github.com/syl20bnr/5516054
                              
 *** Dash-haskell
 #+BEGIN_SRC emacs-lisp
+(require 'helm-dash)
 (defun activate-package-docsets (root) 
 (progn
    (setq helm-dash-docsets-path root) 
@@ -680,7 +681,7 @@ https://gist.github.com/syl20bnr/5516054
       (length helm-dash-common-docsets) root))
 ))
 #+END_SRC
-
+    
 *** Purescript
 #+BEGIN_SRC emacs-lisp
 (req-package purescript-mode
