@@ -645,10 +645,12 @@ https://gist.github.com/syl20bnr/5516054
 (req-package ghc
   :init (add-hook 'haskell-mode-hook (lambda () 
                                       (progn (print   (shell-command-to-string "ghc --numeric-version") )
-                                             (when (string= (shell-command-to-string "ghc --numeric-version") "7.8.4")
-                                                   (progn (ghc-init)
+                                             (if (string-prefix-p "7.8.4" (shell-command-to-string "ghc --numeric-version"))
+                                                   (progn (print "starting ghc-mod !")
+                                                          (ghc-init)
                                                           (turn-on-haskell-indent)
                                                    )
+                                                   (print "ghc-mod not started" )
                                              )
                                       )
                                      )
@@ -665,6 +667,17 @@ https://gist.github.com/syl20bnr/5516054
                              'structured-haskell-mode))
 
                              
+*** Dash-haskell
+(defun activate-package-docsets (root) 
+(progn
+   (setq helm-dash-docsets-path root) 
+   (setq helm-dash-common-docsets (helm-dash-installed-docsets))
+
+   (message 
+    (format "activated %d docsets from: %s" 
+      (length helm-dash-common-docsets) root))
+))
+
 
 *** Purescript
 #+BEGIN_SRC emacs-lisp
