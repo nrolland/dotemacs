@@ -48,6 +48,7 @@ Cask is initialized in =init.el= with the following:
 *** install Packages  
 - Install [[https://github.com/cask/cask][Cask]].
 - Run =cask install= in =$HOME/.emacs.d/=. to install all the packages mentioned here
+- You can specify for which emacs the cask install will run cf [[https://cask.readthedocs.org/en/latest/guide/usage.html][here]] in Environment variables 
 - We require Cask after loading the dependency management system
 - This should also install req-package
   
