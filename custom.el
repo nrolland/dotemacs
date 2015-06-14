@@ -43,6 +43,12 @@
  '(ns-tool-bar-display-mode (quote both) t)
  '(ns-tool-bar-size-mode nil t)
  '(org-src-fontify-natively t)
+ '(package-archives
+   (quote
+    (("gnu" . "http://elpa.gnu.org/packages/")
+     ("marmalade" . "http://marmalade-repo.org/packages/")
+     ("melpa" . "http://melpa.milkbox.net/packages/")
+     ("melpa-stable" . "http://stable.melpa.org/packages/"))))
  '(proof-three-window-enable t)
  '(purescript-mode-hook
    (quote

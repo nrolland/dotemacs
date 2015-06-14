@@ -640,7 +640,9 @@ https://gist.github.com/syl20bnr/5516054
 (req-package flycheck-haskell
   :config (add-hook 'flycheck-mode-hook #'flycheck-haskell-setup))
 
-
+(setq debug-on-error t)
+(setq ghc-debug t) 
+(setq  ghc-interactive-command "ghc-modi")
 (setq shm-program-name  "/Users/nrolland/.emacs.d/structured-haskell-mode/dist/build/structured-haskell-mode/structured-haskell-mode")
 
 (req-package ghc
@@ -680,8 +682,20 @@ https://gist.github.com/syl20bnr/5516054
     (format "activated %d docsets from: %s" 
       (length helm-dash-common-docsets) root))
 ))
+(defun activate-package-docset-here ()
+(interactive)
+(activate-package-docsets 
+   (concat  (replace-regexp-in-string "\n$" "" (shell-command-to-string "ghc-mod root"))  
+            "/docsets/"))
+)
+
 #+END_SRC
     
+*** command-line-emacs
+activate with M-x command-log-mod 
+
+(require 'command-log-mode)
+
 *** Purescript
 #+BEGIN_SRC emacs-lisp
 (req-package purescript-mode
