@@ -220,6 +220,7 @@ https://github.com/purcell/exec-path-from-shell
 ;; week (or day) action.
 
 (global-set-key (kbd "C-x f")  'helm-recentf)
+(global-set-key (kbd "C-c F") 'recentf-ido-find-file)
 (global-set-key (kbd "C-l")  'kill-whole-line)
 (global-set-key (kbd "C-x C-b") 'ido-switch-buffer)
 (global-set-key (kbd "C-x B") 'ibuffer)
@@ -673,7 +674,8 @@ https://gist.github.com/syl20bnr/5516054
 *** Dash-haskell
 #+BEGIN_SRC emacs-lisp
 (require 'helm-dash)
-(defun activate-package-docsets (root) 
+(defun dash-activate-package-docsets (root) 
+(interactive)
 (progn
    (setq helm-dash-docsets-path root) 
    (setq helm-dash-common-docsets (helm-dash-installed-docsets))
@@ -682,7 +684,7 @@ https://gist.github.com/syl20bnr/5516054
     (format "activated %d docsets from: %s" 
       (length helm-dash-common-docsets) root))
 ))
-(defun activate-package-docset-here ()
+(defun dash-activate-package-docset-here ()
 (interactive)
 (activate-package-docsets 
    (concat  (replace-regexp-in-string "\n$" "" (shell-command-to-string "ghc-mod root"))  
@@ -876,6 +878,8 @@ The bookmark descriptions include the tags.
 (require 'bookmark+)
 #+END_SRC
 
+*** Rust 
+(add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-mode))
 * Finish Requirements
 All done with  =req-package=.
 #+BEGIN_SRC emacs-lisp
