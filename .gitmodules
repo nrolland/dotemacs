@@ -1,9 +1,6 @@
 [submodule "snippets/shnippet"]
 	path = snippets/shnippet
 	url = https://github.com/LukeHoersten/shnippet.git
-[submodule "org-reveal"]
-	path = org-reveal
-	url = https://github.com/yjwen/org-reveal.git
 [submodule "reveal.js"]
 	path = reveal.js
 	url = https://github.com/hakimel/reveal.js.git
