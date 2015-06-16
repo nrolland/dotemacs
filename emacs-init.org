@@ -1,5 +1,4 @@
 * Emacs Org Configuration
-Last edited on 2014-04-07 00:22:47
 * Description
 This file is tangled using =org-babel-load-file=. What this does is generate 
 a =emacs-init.el= from the =emacs-lisp= source blocks.
