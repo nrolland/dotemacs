@@ -482,13 +482,17 @@ https://gist.github.com/syl20bnr/5516054
 
 
 
-*** org-languages
+*** org-languages and org reveal
+
 #+BEGIN_SRC emacs-lisp
 (require 'ob-clojure)
 (require 'ob-sh)
 (require 'ob-perl)
 (require 'ob-haskell)
-;;(require 'ox-reveal)
+
+(add-to-list 'load-path "/Users/nrolland/.emacs.d/org-reveal")
+;;(setq org-reveal-root "file:///Users/nrolland/.emacs.d/reveal.js/js/reveal.js")
+(require 'ox-reveal)
 
 
 (defun sh-send-line-or-region (&optional step)
