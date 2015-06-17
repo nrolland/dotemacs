@@ -143,24 +143,6 @@ Start using =req-package=
 
 *** autofill mode : go to a new line autlatically
 ('auto-fill-mode)
-*** multiple cursors
-
-https://github.com/magnars/multiple-cursors.el
-
-
-#+BEGIN_SRC emacs-lisp
-(require 'multiple-cursors)
-(global-set-key (kbd "C->") 'mc/mark-next-like-this)
-(global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
-(global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
-#+END_SRC
-
-First mark the word, then add more cursors.
-
-To get out of multiple-cursors-mode, press <return> or C-g. The latter will first disable
- multiple regions before disabling multiple cursors. If you want to insert a newline in 
-multiple-cursors-mode, use C-j.
-
 *** Exec path from shell and other settings
 Attention : environnement of emacs and shell is different
 with the following we can transfer. 
@@ -484,9 +466,20 @@ https://gist.github.com/syl20bnr/5516054
 
 
 
-*** org-languages and org reveal
+*** org-mode org-languages  org-reveal and org-capture
+
+(global-set-key "\C-cl" 'org-store-link)
+(global-set-key "\C-ca" 'org-agenda)
+
 
 #+BEGIN_SRC emacs-lisp
+;;to allow image to be resized
+(setq org-image-actual-width nil)
+
+(setq org-mobile-inbox-for-pull (concat org-directory "/flagged.org"))
+;; Set to <your Dropbox root directory>/MobileOrg.
+(setq org-mobile-directory "~/Dropbox/Apps/MobileOrg")
+
 (require 'ob-clojure)
 (require 'ob-sh)
 (require 'ob-perl)
@@ -497,6 +490,13 @@ https://gist.github.com/syl20bnr/5516054
 (require 'ox-reveal)
 
 
+(setq org-default-notes-file (concat org-directory "/notes.org"))
+     (define-key global-map "\C-cc" 'org-capture)
+#+END_SRC
+
+*** various functions 
+
+#+BEGIN_SRC emacs-lisp
 (defun sh-send-line-or-region (&optional step)
   (interactive ())
   (let ((proc (get-process "shell"))
@@ -549,9 +549,16 @@ https://gist.github.com/syl20bnr/5516054
     (shr-render-buffer buf-html)
     (eww-mode)
     (kill-buffer buf-html)))
-
-
+(defun dos2unix ()
+  "Convert a DOS formatted text buffer to UNIX format"
+  (interactive)
+  (set-buffer-file-coding-system 'undecided-unix nil))
+(defun unix2dos ()
+  "Convert a UNIX formatted text buffer to DOS format"
+  (interactive)
+  (set-buffer-file-coding-system 'undecided-dos nil))
 #+END_SRC
+
 
 *** Flycheck
     Not sure what to do with this.
@@ -762,6 +769,13 @@ For more information, type M-x describe-function RET company-mode.
 *** Multiple Cursors
 [[https://github.com/emacsmirror/multiple-cursors][Multiple Cursors]] brings you seemingly unlimited power.
 
+First mark the word, then add more cursors.
+
+To get out of multiple-cursors-mode, press <return> or C-g. The latter will first disable
+multiple regions before disabling multiple cursors. If you want to insert a newline in 
+multiple-cursors-mode, use C-j.
+
+
 #+BEGIN_SRC emacs-lisp
 ;; Create new cursor by marking region with up / down
 (req-package rectangular-region-mode
@@ -772,15 +786,7 @@ For more information, type M-x describe-function RET company-mode.
              :require (multiple-cursors-core thingatpt)
              :bind (("C-c C->" . mc/mark-next-like-this)
                     ("C-c C-<" . mc/mark-previous-like-this)
-                    ( "C-c c s" . mc/mark-all-like-this)))
-(defun dos2unix ()
-  "Convert a DOS formatted text buffer to UNIX format"
-  (interactive)
-  (set-buffer-file-coding-system 'undecided-unix nil))
-(defun unix2dos ()
-  "Convert a UNIX formatted text buffer to DOS format"
-  (interactive)
-  (set-buffer-file-coding-system 'undecided-dos nil))
+                    ( "C-c <" . mc/mark-all-like-this)))
 
 #+END_SRC
 
@@ -811,7 +817,7 @@ Expand region increases the selected region by semantic units. Just keep pressin
 dynamically.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-  (req-package guide-key
+(req-package guide-key
     :diminish (guide-key-mode . "")
     :config
     (guide-key-mode 1)
@@ -822,6 +828,11 @@ dynamically.
     (setq guide-key/highlight-command-regexp
           '(("rectangle" . font-lock-warning-face)
             ("register"  . font-lock-type-face))))
+(defun guide-key/my-hook-function-for-org-mode ()
+  (guide-key/add-local-guide-key-sequence "C-c")
+  (guide-key/add-local-guide-key-sequence "C-c C-x")
+  (guide-key/add-local-highlight-command-regexp "org-"))
+  (add-hook 'org-mode-hook 'guide-key/my-hook-function-for-org-mode)   
 #+END_SRC
 
 

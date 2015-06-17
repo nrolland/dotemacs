@@ -42,6 +42,9 @@
  '(haskell-process-log t)
  '(ns-tool-bar-display-mode (quote both) t)
  '(ns-tool-bar-size-mode nil t)
+ '(org-agenda-files (quote ("~/notes/emacs.org")))
+ '(org-agenda-start-on-weekday nil)
+ '(org-directory "~/notes")
  '(org-src-fontify-natively t)
  '(package-archives
    (quote
