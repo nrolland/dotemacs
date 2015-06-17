@@ -142,7 +142,8 @@ Start using =req-package=
 #+END_SRC
     
 
-
+*** autofill mode : go to a new line autlatically
+('auto-fill-mode)
 *** multiple cursors
 
 https://github.com/magnars/multiple-cursors.el
@@ -211,6 +212,7 @@ https://github.com/purcell/exec-path-from-shell
       recentf-max-menu-items 15)
 (recentf-mode +1)
 
+
 *** Key bindings
     SCHEDULED: <2014-09-14 Sun>
 #+BEGIN_SRC emacs-lisp
@@ -226,6 +228,7 @@ https://github.com/purcell/exec-path-from-shell
 (global-set-key (kbd "C-x B") 'ibuffer)
 #+END_SRC
     
+
 *** Server emacs
 (require 'server)
 (or (server-running-p)
