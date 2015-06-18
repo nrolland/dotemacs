@@ -467,10 +467,12 @@ https://gist.github.com/syl20bnr/5516054
 
 
 *** magit
+
+This opens a magit status from wish you can push
+The main advantage is to do git poperation from emacs
+
 #+BEGIN_SRC emacs-lisp
-
 (global-set-key "\C-xg" 'magit-status)
-
 #+End_SRC
 
 *** COMMENT org-mode org-languages  org-reveal and org-capture
