@@ -414,8 +414,81 @@ https://github.com/joodland/bm
 (global-set-key (kbd "<S-f2>") 'bm-previous)
 #+END_SRC
 
+*** various functions 
 
-*** Winner mode - undo 
+#+BEGIN_SRC emacs-lisp
+(defun sh-send-line-or-region (&optional step)
+  (interactive ())
+  (let ((proc (get-process "shell"))
+        pbuf min max command)
+    (unless proc
+      (let ((currbuff (current-buffer)))
+        (shell)
+        (switch-to-buffer currbuff)
+        (setq proc (get-process "shell"))
+        ))
+    (setq pbuff (process-buffer proc))
+    (if (use-region-p)
+        (setq min (region-beginning)
+              max (region-end))
+      (setq min (point-at-bol)
+            max (point-at-eol)))
+    (setq command (concat (buffer-substring min max) "\n"))
+    (with-current-buffer pbuff
+      (goto-char (process-mark proc))
+      (insert command)
+      (move-marker (process-mark proc) (point))
+      ) ;;pop-to-buffer does not work with save-current-buffer -- bug?
+    (process-send-string  proc command)
+    (display-buffer (process-buffer proc) t)
+    (when step 
+      (goto-char max)
+      (next-line))
+    ))
+
+(defun sh-send-line-or-region-and-step ()
+  (interactive)
+  (sh-send-line-or-region t))
+(defun sh-switch-to-process-buffer ()
+  (interactive)
+  (pop-to-buffer (process-buffer (get-process "shell")) t))
+
+(defun my-reloadEmacsConfig() 
+  (interactive)
+  (find-file (expand-file-name
+                   (concat user-emacs-directory "init.el")))
+  (eval-buffer)
+)
+(defun ignore-error-wrapper (fn)
+  "Funtion return new function that ignore errors.
+   The function wraps a function with `ignore-errors' macro."
+  (lexical-let ((fn fn))
+    (lambda ()
+      (interactive)
+      (ignore-errors
+        (funcall fn)))))
+
+(defun gk-markdown-preview-buffer ()
+  (interactive)
+  (let* ((buf-this (buffer-name (current-buffer)))
+         (buf-html (get-buffer-create
+                    (format "*gk-md-html (%s)*" buf-this))))
+    (markdown-other-window (buffer-name buf-html))
+    (shr-render-buffer buf-html)
+    (eww-mode)
+    (kill-buffer buf-html)))
+(defun dos2unix ()
+  "Convert a DOS formatted text buffer to UNIX format"
+  (interactive)
+  (set-buffer-file-coding-system 'undecided-unix nil))
+(defun unix2dos ()
+  "Convert a UNIX formatted text buffer to DOS format"
+  (interactive)
+  (set-buffer-file-coding-system 'undecided-dos nil))
+#+END_SRC
+
+
+*** Winner mode  - windmove
 
 Winner Mode has been included with GNU Emacs since version 20.
 
@@ -431,7 +504,15 @@ http://www.emacswiki.org/emacs/WinnerMode
   (global-set-key [C-f7] 'winner-redo)
   (global-set-key [f9] 'delete-other-windows)
   (global-set-key [C-f9] 'delete-window))
+  (global-set-key [s-left] (ignore-error-wrapper 'windmove-left))
+  (global-set-key [s-right] (ignore-error-wrapper 'windmove-right))
+  (global-set-key [s-up] (ignore-error-wrapper 'windmove-up))
+  (global-set-key [s-down] (ignore-error-wrapper 'windmove-down))
+  (global-set-key [C-s-left] (ignore-error-wrapper 'ns-prev-frame))
+  (global-set-key [C-s-right] (ignore-error-wrapper 'ns-next-frame))
 #+END_SRC
+
+
 
 *** Mac stuff
 This is to use the mouse-2 command on mac 
@@ -503,71 +584,6 @@ The main advantage is to do git poperation from emacs
 
 (setq org-default-notes-file (concat org-directory "/notes.org"))
      (define-key global-map "\C-cc" 'org-capture)
-#+END_SRC
-
-*** various functions 
-
-#+BEGIN_SRC emacs-lisp
-(defun sh-send-line-or-region (&optional step)
-  (interactive ())
-  (let ((proc (get-process "shell"))
-        pbuf min max command)
-    (unless proc
-      (let ((currbuff (current-buffer)))
-        (shell)
-        (switch-to-buffer currbuff)
-        (setq proc (get-process "shell"))
-        ))
-    (setq pbuff (process-buffer proc))
-    (if (use-region-p)
-        (setq min (region-beginning)
-              max (region-end))
-      (setq min (point-at-bol)
-            max (point-at-eol)))
-    (setq command (concat (buffer-substring min max) "\n"))
-    (with-current-buffer pbuff
-      (goto-char (process-mark proc))
-      (insert command)
-      (move-marker (process-mark proc) (point))
-      ) ;;pop-to-buffer does not work with save-current-buffer -- bug?
-    (process-send-string  proc command)
-    (display-buffer (process-buffer proc) t)
-    (when step 
-      (goto-char max)
-      (next-line))
-    ))
-
-(defun sh-send-line-or-region-and-step ()
-  (interactive)
-  (sh-send-line-or-region t))
-(defun sh-switch-to-process-buffer ()
-  (interactive)
-  (pop-to-buffer (process-buffer (get-process "shell")) t))
-
-(defun my-reloadEmacsConfig() 
-  (interactive)
-  (find-file (expand-file-name
-                   (concat user-emacs-directory "init.el")))
-  (eval-buffer)
-)
-
-(defun gk-markdown-preview-buffer ()
-  (interactive)
-  (let* ((buf-this (buffer-name (current-buffer)))
-         (buf-html (get-buffer-create
-                    (format "*gk-md-html (%s)*" buf-this))))
-    (markdown-other-window (buffer-name buf-html))
-    (shr-render-buffer buf-html)
-    (eww-mode)
-    (kill-buffer buf-html)))
-(defun dos2unix ()
-  "Convert a DOS formatted text buffer to UNIX format"
-  (interactive)
-  (set-buffer-file-coding-system 'undecided-unix nil))
-(defun unix2dos ()
-  "Convert a UNIX formatted text buffer to DOS format"
-  (interactive)
-  (set-buffer-file-coding-system 'undecided-dos nil))
 #+END_SRC
 
 
