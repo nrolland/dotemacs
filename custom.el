@@ -4,6 +4,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 120 :width normal :foundry "nil" :family "Monaco"))))
+ '(cursor ((t (:background "brown"))))
  '(shm-current-face ((t (:background "#eee8d5"))))
  '(shm-quarantine-face ((t (:background "lemonchiffon")))))
 (custom-set-variables
@@ -42,7 +43,9 @@
  '(haskell-process-log t)
  '(ns-tool-bar-display-mode (quote both) t)
  '(ns-tool-bar-size-mode nil t)
- '(org-agenda-files (quote ("~/notes/emacs.org")))
+ '(org-agenda-files
+   (quote
+    ("~/notes/notes.org" "~/notes/emacs.org" "~/notes/general.org")))
  '(org-agenda-start-on-weekday nil)
  '(org-directory "~/notes")
  '(org-src-fontify-natively t)

@@ -466,13 +466,22 @@ https://gist.github.com/syl20bnr/5516054
 
 
 
-*** org-mode org-languages  org-reveal and org-capture
+*** magit
+#+BEGIN_SRC emacs-lisp
+
+(global-set-key "\C-xg" 'magit-status)
+
+#+End_SRC
+
+*** COMMENT org-mode org-languages  org-reveal and org-capture
+
+
+#+BEGIN_SRC emacs-lisp
 
 (global-set-key "\C-cl" 'org-store-link)
 (global-set-key "\C-ca" 'org-agenda)
 
 
-#+BEGIN_SRC emacs-lisp
 ;;to allow image to be resized
 (setq org-image-actual-width nil)
 
