@@ -8,3 +8,6 @@ scratch*
 *compiled*
 projectile*
 bookmarks
+/.sx/
+/tramp
+/url/
