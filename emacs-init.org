@@ -467,6 +467,30 @@ https://github.com/joodland/bm
 *** various functions 
 
 #+BEGIN_SRC emacs-lisp
+(defun sync-windows ()
+  "Organize a series of windows for ultimate distraction."
+  (interactive)
+  (delete-other-windows)
+  (setq old  magit-status-buffer-switch-function)
+  (setq magit-status-buffer-switch-function 'switch-to-buffer)
+  ;; Start with the Stack Overflow interface
+  (magit-status  "~/notes/")
+  (split-window-horizontally)
+  (other-window 1)
+  (magit-status "~/.emacs.d/")
+
+  (split-window-vertically)
+  (magit-status  "~/.nixpkgs/")
+
+  (other-window 2)
+  (split-window-vertically)
+  (magit-status  "~/.yadr/")
+  (setq magit-status-buffer-switch-function old)
+  (window-configuration-to-register ?w))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+
 (defun setup-windows ()
   "Organize a series of windows for ultimate distraction."
   (interactive)
@@ -597,7 +621,7 @@ This is to use the mouse-2 command on mac
 
 *** Dired
 This is to save-as a file.
-C-x C-j (dired-jump to current file) 
+C-x C-j (diredhk-jump to current file) 
 R to rename the file (or dired-do-rename). 
 C-x k RET to go back to the (renamed) buffer The rename is equivalent to a shell mv, but will also update any open buffers.
 
