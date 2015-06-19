@@ -148,9 +148,10 @@ Attention : environnement of emacs and shell is different
 with the following we can transfer. 
 
 exec-path-from-shell-initializ : This sets $MANPATH, $PATH and exec-path from your shell, but only on OS X.
-
+http://www.gnu.org/software/emacs/manual/html_node/elisp/System-Environment.html
 
 https://github.com/purcell/exec-path-from-shell
+
 
 #+BEGIN_SRC emacs-lisp
 (req-package exec-path-from-shell
@@ -271,6 +272,8 @@ Persistent history
 #+END_SRC
 
 *** fixing backspace in C-s
+
+    I deactivate this kept only as elisp example
 #+BEGIN_SRC emacs-lisp
 (defun mydelete ()
   "Delete the failed portion of the search string, or the last char if successful."
@@ -414,9 +417,79 @@ https://github.com/joodland/bm
 (global-set-key (kbd "<S-f2>") 'bm-previous)
 #+END_SRC
 
+*** IRC client Circe
+
+#+BEGIN_SRC emacs-lisp
+(require 'circe)
+(add-to-list 'circe-network-options
+      '("Freenode"
+        :nick "nicocbg"
+        :channels ("#haskell" "#haskell-fr")
+        ;;:nickserv-password, getEnv "FREENODE_PASSWORD"
+         )
+)
+
+(defun circe-connect-all ()
+  "Connects to my favorite IRC servers and channels."
+  (interactive)
+  (circe "Freenode"))
+(setq circe-format-say "{nick}> {body}")
+;;hide spam
+(circe-set-display-handler "JOIN" (lambda (&rest ignored) nil))
+(circe-set-display-handler "PART" (lambda (&rest ignored) nil))
+(circe-set-display-handler "QUIT" (lambda (&rest ignored) nil))
+
+(setq circe-reduce-lurker-spam t)
+(require 'lui-autopaste)
+(add-hook 'circe-channel-mode-hook 'enable-lui-autopaste)
+(setq lui-flyspell-p t
+      lui-flyspell-alist '((".*" "american")))
+(setq lui-time-stamp-position 'right-margin
+      lui-time-stamp-format "%H:%M")
+
+(add-hook 'lui-mode-hook 'my-circe-set-margin)
+(defun my-circe-set-margin ()
+  (setq right-margin-width 5))
+
+(setq lui-time-stamp-position 'right-margin
+      lui-fill-type nil)
+
+(add-hook 'lui-mode-hook 'my-lui-setup)
+(defun my-lui-setup ()
+  (setq
+   fringes-outside-margins t
+   right-margin-width 5
+   word-wrap t
+   wrap-prefix "    "))
+#+END_SRC
+
+
 *** various functions 
 
 #+BEGIN_SRC emacs-lisp
+(defun setup-windows ()
+  "Organize a series of windows for ultimate distraction."
+  (interactive)
+  (delete-other-windows)
+
+  ;; Start with the Stack Overflow interface
+  (sx-tab-frontpage t nil)
+
+  ;; Put IRC on the other side
+  (split-window-horizontally)
+  (other-window 1)
+  (circe-connect-all)
+
+  ;; My RSS Feed goes on top:
+  (split-window-vertically)
+  (elfeed)
+
+  ;; And start up the Twitter interface above that:
+  (other-window 2)
+  (split-window-vertically)
+  (twit)
+
+  (window-configuration-to-register ?w))
 (defun sh-send-line-or-region (&optional step)
   (interactive ())
   (let ((proc (get-process "shell"))
@@ -955,3 +1028,4 @@ See URL `http://flowtype.org/'."
 	  line-end))
           :modes js-mode)
 #+END_SRC
+* Winner mode - windmove
