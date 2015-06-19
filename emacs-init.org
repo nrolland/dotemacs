@@ -799,7 +799,7 @@ The main advantage is to do git poperation from emacs
 ))
 (defun dash-activate-package-docset-here ()
 (interactive)
-(activate-package-docsets 
+(dash-activate-package-docsets 
    (concat  (replace-regexp-in-string "\n$" "" (shell-command-to-string "ghc-mod root"))  
             "/docsets/"))
 )
