@@ -55,6 +55,7 @@
      ("marmalade" . "http://marmalade-repo.org/packages/")
      ("melpa" . "http://melpa.milkbox.net/packages/")
      ("melpa-stable" . "http://stable.melpa.org/packages/"))))
+ '(pallet-mode t)
  '(proof-three-window-enable t)
  '(purescript-mode-hook
    (quote

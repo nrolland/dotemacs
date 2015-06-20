@@ -653,14 +653,25 @@ The main advantage is to do git poperation from emacs
 (global-set-key "\C-xg" 'magit-status)
 #+End_SRC
 
-*** COMMENT org-mode org-languages  org-reveal and org-capture
+*** org-mode org-languages  org-reveal and org-capture
+
 
 
 #+BEGIN_SRC emacs-lisp
 
 (global-set-key "\C-cl" 'org-store-link)
 (global-set-key "\C-ca" 'org-agenda)
+; Refiling C-c C-w
+(setq org-refile-targets '((nil :maxlevel . 2)
+                           ("~/notes/emacs.org" :maxlevel . 2)
+                           ("~/notes/general.org" :maxlevel . 2)
+                           ))
+; This allows for file like pathing for refiling
+;  and lets me pick heading and subheading (level <= 2)
+(setq org-refile-use-outline-path t)
 
+;;[[http://orgmode.org/manual/Speed-keys.html][speed key]]
+(setq org-use-speed-commands t)
 
 ;;to allow image to be resized
 (setq org-image-actual-width nil)
