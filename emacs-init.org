@@ -188,12 +188,23 @@ https://github.com/purcell/exec-path-from-shell
   ;; on mac, there's always a menu bar drown, don't have it empty
   (menu-bar-mode -1))
 #+END_SRC
+*** Tramp
+
+For browsing other computers
+I cant get this to work and use sshfs instead
+#+BEGIN_SRC emacs-lisp
+(require 'tramp)
+(setq tramp-default-method "ssh")
+(put 'temporary-file-directory 'standard-value '((file-name-as-directory "/tmp")))
+#+END_SRC
 *** recent files 
+
+#+BEGIN_SRC emacs-lisp
 (require 'recentf)
 (setq recentf-max-saved-items 200
       recentf-max-menu-items 15)
 (recentf-mode +1)
-
+#+END_SRC
 
 *** Key bindings
     SCHEDULED: <2014-09-14 Sun>
@@ -585,7 +596,7 @@ https://github.com/joodland/bm
 #+END_SRC
 
 
-*** Winner mode  - windmove
+*** Moving between widnows - Winner mode  - windmove
 
 Winner Mode has been included with GNU Emacs since version 20.
 
@@ -605,8 +616,68 @@ http://www.emacswiki.org/emacs/WinnerMode
   (global-set-key [s-right] (ignore-error-wrapper 'windmove-right))
   (global-set-key [s-up] (ignore-error-wrapper 'windmove-up))
   (global-set-key [s-down] (ignore-error-wrapper 'windmove-down))
-  (global-set-key [C-s-left] (ignore-error-wrapper 'ns-prev-frame))
-  (global-set-key [C-s-right] (ignore-error-wrapper 'ns-next-frame))
+
+  ;; not useful on mac, use s-` as in other apps to cycle
+  ;;(global-set-key [C-s-left] (ignore-error-wrapper 'ns-prev-frame))
+  ;;(global-set-key [C-s-right] (ignore-error-wrapper 'ns-next-frame))
+  (global-set-key [C-tab] 'bury-buffer)
+  (global-set-key [C-s-tab] 'unbury-buffer)
+
+#+END_SRC
+
+****** Moving buffer among windows
+http://www.emacswiki.org/emacs/buffer-move.el
+
+#+BEGIN_SRC emacs-lisp
+(require 'buffer-move)
+;; This file is for lazy people wanting to swap buffers without
+;; typing C-x b on each window. This is useful when you have :
+
+(global-set-key  [C-s-up]     'buf-move-up)
+(global-set-key  [C-s-down]   'buf-move-down)
+(global-set-key  [C-s-left]   'buf-move-left)
+(global-set-key  [C-s-right]  'buf-move-right)
+
+
+;;experiments
+(defun switch-buffers-between-frames ()
+  "switch-buffers-between-frames switches the buffers between the two last frames"
+  (interactive)
+  (let ((this-frame-buffer nil)
+	(other-frame-buffer nil))
+    (setq this-frame-buffer (car (frame-parameter nil 'buffer-list)))
+    (other-frame 1)
+    (setq other-frame-buffer (car (frame-parameter nil 'buffer-list)))
+    (switch-to-buffer this-frame-buffer)
+    (other-frame 1)
+    (switch-to-buffer other-frame-buffer)))
+
+  (global-set-key [M-s-left] (ignore-error-wrapper 'previous-buffer))
+  (global-set-key [M-s-right] (ignore-error-wrapper 'next-buffer))
+
+(defun rotate-window-buffers (&optional n)
+  "Exchange buffers in all windows N times.
+With positive N, it uses the window order of `window-list'.
+With negative N, does this in the reverse order."
+  (interactive "p")
+  (let* ((ws (window-list))
+         (bs (mapcar 'window-buffer ws))
+         (ps (mapcar 'window-point ws))
+         (n  (mod (or n 1) (length ws))))
+    (dolist (w (append (last ws n) (butlast ws n)))
+      (set-window-buffer w (pop bs))
+      (set-window-point  w (pop ps)))))
+
+(defun rotate-window-buffers2 (&optional n)
+   ;;this is necessary for binding to global-set-key
+   ;;http://stackoverflow.com/questions/1250846/wrong-type-argument-commandp-error-when-binding-a-lambda-to-a-key
+   (interactive "p")
+   (if n (rotate-window-buffers (- 0 n)) (rotate-window-buffers -1))) 
+
+(global-set-key  [S-s-up]  'rotate-window-buffers)
+;;comment inverser l'argument ?
+(global-set-key  [S-s-down]  'rotate-window-buffers2)
+
 #+END_SRC
 
 
@@ -841,15 +912,14 @@ The main advantage is to do git poperation from emacs
 
 #+END_SRC
     
-*** command-line-emacs
+*** command loggin 
+
+This allow to log the keys in a separate window
 activate with M-x command-log-mod 
 
-(require 'command-log-mode)
-*** recent files
-(require 'recentf)
-(setq recentf-max-saved-items 200
-      recentf-max-menu-items 15)
-(recentf-mode +1)
+;;(require 'command-log-mode)
+#+BEGIN_SRC emacs-lisp
+#+END_SRC
 
 *** Purescript
 #+BEGIN_SRC emacs-lisp

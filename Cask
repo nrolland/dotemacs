@@ -15,6 +15,7 @@
 (depends-on "bind-key")
 (depends-on "bm")
 (depends-on "bookmark+")
+(depends-on "buffer-move")
 (depends-on "caml")
 (depends-on "cask")
 (depends-on "circe")
