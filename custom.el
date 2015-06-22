@@ -12,6 +12,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(add-to-list (quote org-capture-templates) t)
  '(agda2-include-dirs
    (quote
     ("." "/Users/nrolland/clones/agda-stdlib/src" "/Users/nrolland/clones/HoTT-Agda/lib")))
@@ -43,12 +44,7 @@
  '(haskell-process-log t)
  '(ns-tool-bar-display-mode (quote both) t)
  '(ns-tool-bar-size-mode nil t)
- '(org-agenda-files
-   (quote
-    ("~/notes/notes.org" "~/notes/emacs.org" "~/notes/general.org")))
- '(org-agenda-start-on-weekday nil)
- '(org-directory "~/notes")
- '(org-src-fontify-natively t)
+
  '(package-archives
    (quote
     (("gnu" . "http://elpa.gnu.org/packages/")

@@ -226,7 +226,7 @@ I cant get this to work and use sshfs instead
 (require 'server)
 (or (server-running-p)
     (server-start))
-
+    
 *** some example functions
 If you've Emacs 24.4 the cleanest way to do it would be the new feature exposed delete-duplicate-lines
 #+BEGIN_SRC
@@ -561,12 +561,14 @@ https://github.com/joodland/bm
   (interactive)
   (pop-to-buffer (process-buffer (get-process "shell")) t))
 
-(defun my-reloadEmacsConfig() 
+(defun my/reloadEmacsConfig() 
+  "Reloads my emacs configuration"
   (interactive)
-  (find-file (expand-file-name
+  (save-excursion 
+    (find-file (expand-file-name
                    (concat user-emacs-directory "init.el")))
-  (eval-buffer)
-)
+    (eval-buffer)))
+
 (defun ignore-error-wrapper (fn)
   "Funtion return new function that ignore errors.
    The function wraps a function with `ignore-errors' macro."
@@ -726,23 +728,10 @@ The main advantage is to do git poperation from emacs
 
 *** org-mode org-languages  org-reveal and org-capture
 
-
-
 #+BEGIN_SRC emacs-lisp
-
-(global-set-key "\C-cl" 'org-store-link)
-(global-set-key "\C-ca" 'org-agenda)
-; Refiling C-c C-w
-(setq org-refile-targets '((nil :maxlevel . 2)
-                           ("~/notes/emacs.org" :maxlevel . 2)
-                           ("~/notes/general.org" :maxlevel . 2)
-                           ))
-; This allows for file like pathing for refiling
-;  and lets me pick heading and subheading (level <= 2)
-(setq org-refile-use-outline-path t)
-
 ;;[[http://orgmode.org/manual/Speed-keys.html][speed key]]
 (setq org-use-speed-commands t)
+(setq org-src-fontify-natively t)
 
 ;;to allow image to be resized
 (setq org-image-actual-width nil)
@@ -759,12 +748,318 @@ The main advantage is to do git poperation from emacs
 (add-to-list 'load-path "/Users/nrolland/.emacs.d/org-reveal")
 ;;(setq org-reveal-root "file:///Users/nrolland/.emacs.d/reveal.js/js/reveal.js")
 (require 'ox-reveal)
+;; for yasnippet conflict
+(add-hook 'org-mode-hook
+                    (lambda ()
+                      (org-set-local 'yas/trigger-key [tab])
+                      (define-key yas/keymap [tab] 'yas/next-field-or-maybe-expand)))
+;;file whose name is just number is org mode
+(add-to-list 'auto-mode-alist '(".*/[0-9]*$" . org-mode))
 
 
-(setq org-default-notes-file (concat org-directory "/notes.org"))
-     (define-key global-map "\C-cc" 'org-capture)
+(global-set-key "\C-cb" 'org-ido-switchb)
+
 #+END_SRC
 
+*** Org-agenda and refiling 
+
+Refiling sends entries to other files
+
+#+BEGIN_SRC emacs-lisp
+(global-set-key "\C-cl" 'org-store-link)
+(global-set-key "\C-ca" 'org-agenda)
+(global-set-key (kbd "<f12>") 'org-agenda)
+(define-key global-map "\C-cc" 'org-capture)
+
+(setq org-directory "~/notes")
+
+;; Use sticky agenda's so they persist
+;;Sticky agendas allow you to have more than one agenda view created simultaneously.
+;; You can quickly switch to the view without incurring an agenda rebuild by
+;; invoking the agenda custom command key that normally generates the agenda. 
+;; If it already exists it will display the existing view. g forces regeneration of
+;; the agenda view.
+(setq org-agenda-sticky t)
+
+;;Used as a fall back file for org-capture.el, for templates that
+;;do not specify a target file.
+(setq org-default-notes-file (concat org-directory "/notes.org"))
+
+(setq org-agenda-files
+   (quote
+    ("~/notes/notes.org" 
+     "~/notes/emacs.org" 
+     "~/notes/general.org"
+     "~/notes/organizer.org"
+     "~/notes/emacs-notes.org"
+     "~/notes/business.org" 
+     "~/notes/people.org"
+     "~/notes/journal.org"
+     "~/notes/journal"
+     )))
+
+; Refiling C-c C-w
+; Targets include this file and any file contributing to the agenda - up to 2 levels deep
+(setq org-refile-targets (quote ((nil :maxlevel . 2)
+                                 (org-agenda-files :maxlevel . 2))))
+; This allows for file like pathing for refiling
+;  and lets me pick heading and subheading (level <= 2)
+(setq org-refile-use-outline-path t)
+; Targets complete directly with IDO
+; "type something to get some matching targets, then C-SPC to restrict the matches to the current list"
+(setq org-outline-path-complete-in-steps nil)
+(setq org-completion-use-ido t)
+; not sure about this..
+(setq ido-everywhere t)
+
+; Allow refile to create parent tasks with confirmation
+(setq org-refile-allow-creating-parent-nodes (quote confirm))
+; Use the current window for indirect buffer display
+; a activer une fois assimile
+;(setq org-indirect-buffer-display 'current-window)
+;;;; Refile settings
+; Exclude DONE state tasks from refile targets
+(defun bh/verify-refile-target ()
+  "Exclude todo keywords with a done state from refile targets"
+  (not (member (nth 2 (org-heading-components)) org-done-keywords)))
+(setq org-refile-target-verify-function 'bh/verify-refile-target)
+(setq org-agenda-start-on-weekday nil)
+#+END_SRC
+
+
+#+BEGIN_SRC emacs-lisp
+;; Do not dim blocked tasks
+(setq org-agenda-dim-blocked-tasks nil)
+
+;; Compact the block agenda view
+(setq org-agenda-compact-blocks t)
+
+
+#+END_SRC
+
+Capture Templates
+#+BEGIN_SRC emacs-lisp
+
+(defvar my/org-basic-task-template "* TODO %^{Task}
+SCHEDULED: %^t
+%<%Y-%m-%d %H:%M>
+:PROPERTIES:
+:Effort: %^{effort|1:00|0:05|0:15|0:30|2:00|4:00}
+:END:
+%?
+" "Basic task data")
+
+
+(setq org-capture-templates
+        `(("t" "Tasks" entry
+           (file+headline "~/notes/organizer.org" "Tasks")
+           ,my/org-basic-task-template)
+          ("T" "Quick task" entry
+           (file+headline "~/notes/organizer.org" "Tasks")
+           "* TODO %^{Task}"
+           :immediate-finish t)
+          ("i" "Interrupting task" entry
+           (file+headline "~/notes/organizer.org" "Tasks")
+           "* STARTED %^{Task}"
+           :clock-in :clock-resume)
+          ("e" "Emacs idea" entry
+           (file+headline "~/notes/emacs-notes.org" "Emacs")
+           "* TODO %^{Task}"
+           :immediate-finish t)
+          ("b" "Business task" entry
+           (file+headline "~/notes/business.org" "Tasks")
+           ,my/org-basic-task-template)
+          ("p" "People task" entry
+           (file+headline "~/notes/people.org" "Tasks")
+           ,my/org-basic-task-template)
+          ("j" "Journal Note"
+           entry (file (get-journal-file-today))
+           "* Event: %?\n\n  %i\n\n  From: %a"
+           :empty-lines 1)
+          ;;("j" "Journal entry" plain
+          ;; (file+datetree "~/notes/journal.org")
+          ;; "%K - %a\n%i\n%?\n"
+          ;; :unnarrowed t)
+          ;;("J" "Journal entry with date" plain
+          ;; (file+datetree+prompt "~/notes/journal.org")
+          ;; "%K - %a\n%i\n%?\n"
+          ;; :unnarrowed t)
+          ("s" "Journal entry with date, scheduled" entry
+           (file+datetree+prompt "~/notes/journal.org")
+           "* \n%K - %a\n%t\t%i\n%?\n"
+           :unnarrowed t)
+          ("db" "Done - Business" entry
+           (file+headline "~/notes/business.org" "Tasks")
+           "* DONE %^{Task}\nSCHEDULED: %^t\n%?")
+          ("dp" "Done - People" entry
+           (file+headline "~/notes/people.org" "Tasks")
+           "* DONE %^{Task}\nSCHEDULED: %^t\n%?")
+          ("dt" "Done - Task" entry
+           (file+headline "~/notes/organizer.org" "Tasks")
+           "* DONE %^{Task}\nSCHEDULED: %^t\n%?")
+          ("q" "Quick note" item
+           (file+headline "~/notes/organizer.org" "Quick notes"))
+          ("l" "Ledger entries")
+          ("lm" "MBNA" plain
+           (file "~/personal/ledger")
+           "%(org-read-date) %^{Payee}
+    Liabilities:MBNA
+    Expenses:%^{Account}  $%^{Amount}
+  " :immediate-finish t)
+          ("ln" "No Frills" plain
+           (file "~/personal/ledger")
+           "%(let ((org-read-date-prefer-future nil)) (org-read-date)) * No Frills
+    Liabilities:MBNA
+    Assets:Wayne:Groceries  $%^{Amount}
+  " :immediate-finish t)
+          ("lc" "Cash" plain
+           (file "~/personal/ledger")
+           "%(org-read-date) * %^{Payee}
+    Expenses:Cash
+    Expenses:%^{Account}  %^{Amount}
+  ")
+          ("B" "Book" entry
+           (file+datetree "~/personal/books.org" "Inbox")
+           "* %^{Title}  %^g
+  %i
+  ,*Author(s):* %^{Author} \\\\
+  ,*ISBN:* %^{ISBN}
+
+  %?
+
+  ,*Review on:* %^t \\
+  %a
+  %U"
+           :clock-in :clock-resume)
+           ("c" "Contact" entry (file "~/personal/contacts.org")
+            "* %(org-contacts-template-name)
+  :PROPERTIES:
+  :EMAIL: %(my/org-contacts-template-email)
+  :END:")
+           ("n" "Daily note" table-line (file+olp "~/personal/organizer.org" "Daily notes")
+            "| %u | %^{Note} |"
+            :immediate-finish t)
+           ("r" "Notes" entry
+            (file+datetree "~/personal/organizer.org")
+            "* %?\n\n%i\n"
+            )))
+#+END_SRC
+
+*** Org-journal
+    
+Configuration from [[http://www.howardism.org/Technical/Emacs/journaling-org.html][Howard abrams]]
+#+BEGIN_SRC emacs-lisp
+(setq org-journal-dir (concat org-directory "journal"))
+(defun get-journal-file-today ()
+  "Return filename for today's journal entry."
+  (let ((daily-name (format-time-string "%Y%m%d")))
+    (expand-file-name (concat org-journal-dir daily-name))))
+(defun journal-file-today ()
+  "Create and load a journal file based on today's date."
+  (interactive)
+  (find-file (get-journal-file-today)))
+
+(global-set-key (kbd "C-c f j") 'journal-file-today)
+
+#+END_SRC
+
+**** Preparing for export
+
+"In case I decide to export my journal, I wanted each file to have a
+title with the date. Easy enough using Yasnippet:"
+
+#+BEGIN_SRC emacs-lisp
+(defun journal-file-insert ()
+  "Insert's the journal heading based on the file's name."
+  (interactive)
+  (when (string-match "\\(20[0-9][0-9]\\)\\([0-9][0-9]\\)\\([0-9][0-9]\\)"
+                      (buffer-name))
+    (let ((year  (string-to-number (match-string 1 (buffer-name))))
+          (month (string-to-number (match-string 2 (buffer-name))))
+          (day   (string-to-number (match-string 3 (buffer-name))))
+          (datim nil))
+      (setq datim (encode-time 0 0 0 day month year))
+      (insert (format-time-string
+                 "#+TITLE: Journal Entry- %Y-%b-%d (%A)\n\n" datim)))))
+
+(add-hook 'find-file-hook 'auto-insert)
+(add-to-list 'auto-insert-alist '(".*/[0-9]*$" . journal-file-insert))
+
+#+END_SRC
+
+**** Next and Previous File from [[https://github.com/howardabrams/dot-files/blob/master/emacs-fixes.org#next-and-previous-file][howard abrams]]  
+
+   Sometimes it is obvious what is the /next file/ based on the one
+   I'm currently reading. For instance, in my journal entries, the
+   filename is a number that can be incremented. Same with
+   presentation files...
+
+#+BEGIN_SRC elisp
+  (defun split-string-with-number (string)
+    "Returns a list of three components of the string, the first is
+  the text prior to any numbers, the second is the embedded number,
+  and the third is the rest of the text in the string."
+    (let* ((start (string-match "[0-9]+" string))
+           (end (string-match "[^0-9]+" string start)))
+      (if start
+          (list (substring string 0 start)
+                (substring string start end)
+                (if end  (substring string end)  "")))))
+#+END_SRC
+
+   Which means that the following defines this function:
+
+#+BEGIN_SRC elisp :tangle no
+(split-string-with-number "abc42xyz")  ;; ("abc" "42" "xyz")
+(split-string-with-number "42xyz")     ;; ("" "42" "xyz")
+(split-string-with-number "abc42")     ;; ("abc" "42" "")
+(split-string-with-number "20140424")  ;; ("" "20140424" "")
+(split-string-with-number "abcxyz")    ;; nil
+#+END_SRC
+
+   Given this splitter function, we create a function that takes some
+   sort of operator and return a new filename based on the conversion
+   that happens:
+
+#+BEGIN_SRC elisp
+  (defun find-file-number-change (f)
+    (let* ((filename (buffer-file-name))
+           (parts    (split-string-with-number
+                      (file-name-base filename)))
+           (new-name (number-to-string
+                      (funcall f (string-to-number (nth 1 parts))))))
+       (concat (file-name-directory filename)
+               (nth 0 parts)
+               new-name
+               (nth 2 parts))))
+#+END_SRC
+
+   And this allows us to create two simple functions that can load the
+   "next" and "previous" files:
+
+#+BEGIN_SRC elisp
+  (defun find-file-increment ()
+    "Takes the current buffer, and loads the file that is 'one
+  more' than the file contained in the current buffer. This
+  requires that the current file contain a number that can be
+  incremented."
+    (interactive)
+    (find-file (find-file-number-change '1+)))
+
+  (defun find-file-decrement ()
+    "Takes the current buffer, and loads the file that is 'one
+  less' than the file contained in the current buffer. This
+  requires that the current file contain a number that can be
+  decremented."
+    (interactive)
+    (find-file (find-file-number-change '1-)))
+
+  (global-set-key (kbd "C-c f +") 'find-file-increment)
+  (global-set-key (kbd "C-c f n") 'find-file-increment)
+  (global-set-key (kbd "C-c f -") 'find-file-decrement)
+  (global-set-key (kbd "C-c f p") 'find-file-decrement)
+#+END_SRC
+   
 
 *** Flycheck
     Not sure what to do with this.
@@ -1037,7 +1332,8 @@ dynamically.
   (guide-key/add-local-guide-key-sequence "C-c")
   (guide-key/add-local-guide-key-sequence "C-c C-x")
   (guide-key/add-local-highlight-command-regexp "org-"))
-  (add-hook 'org-mode-hook 'guide-key/my-hook-function-for-org-mode)   
+
+(add-hook 'org-mode-hook 'guide-key/my-hook-function-for-org-mode)   
 #+END_SRC
 
 
