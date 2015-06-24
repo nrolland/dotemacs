@@ -44,7 +44,6 @@
  '(haskell-process-log t)
  '(ns-tool-bar-display-mode (quote both) t)
  '(ns-tool-bar-size-mode nil t)
-
  '(package-archives
    (quote
     (("gnu" . "http://elpa.gnu.org/packages/")
