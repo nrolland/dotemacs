@@ -143,7 +143,7 @@ Start using =req-package=
 
 *** autofill mode : go to a new line autlatically
 #+BEGIN_SRC emacs-lisp
-('auto-fill-mode)
+(auto-fill-mode)
 #+END_SRC
 
 *** Exec path from shell and other settings
@@ -399,11 +399,13 @@ p, <left> -- persp-prev: Switch to previous perspective
 #+BEGIN_SRC emacs-lisp
 (req-package perspective
   :config
-   ;;(progn persp-mode))  ;;does not work
+   ;;(progn persp-mode)  ;;does not work
    (progn (persp-mode)
    )
 )
 #+END_SRC
+
+
 
 *** Helm
 Helm is incremental completion and selection narrowing framework for Emacs
@@ -799,7 +801,7 @@ Refiling sends entries to other files
      "~/notes/people.org"
      "~/notes/journal.org"
      "~/notes/journal"
-     )))r
+     )))
 
 ; Refiling C-c C-w
 ; Targets include this file and any file contributing to the agenda - up to 2 levels deep
