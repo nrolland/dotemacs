@@ -749,6 +749,8 @@ The main advantage is to do git poperation from emacs
 (require 'ob-sh)
 (require 'ob-perl)
 (require 'ob-haskell)
+(setq org-babel-clojure-backend 'cider)
+(require 'cider)
 
 (add-to-list 'load-path "/Users/nrolland/.emacs.d/org-reveal")
 ;;(setq org-reveal-root "file:///Users/nrolland/.emacs.d/reveal.js/js/reveal.js")
@@ -1435,3 +1437,7 @@ See URL `http://flowtype.org/'."
           :modes js-mode)
 #+END_SRC
 * Winner mode - windmove
+
+#+BEGIN_SRC emacs-lisp
+(require 'ac-cider)
+#+END_SRC

@@ -4,6 +4,7 @@
 (source melpa)
 
 (depends-on "4clojure")
+(depends-on "ac-cider")
 (depends-on "ac-etags")
 (depends-on "ac-haskell-process")
 (depends-on "ac-python")
@@ -132,6 +133,7 @@
 (depends-on "twittering-mode")
 (depends-on "use-package")
 (depends-on "vline")
+(depends-on "web-mode")
 (depends-on "websocket")
 (depends-on "yas-jit")
 (depends-on "yasnippet")

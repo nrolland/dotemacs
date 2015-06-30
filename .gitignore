@@ -12,3 +12,5 @@ bookmarks
 /tramp
 /url/
 /.org-id-locations
+/abbrev_defs
+/.mc-lists.el
