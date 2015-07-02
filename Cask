@@ -62,6 +62,7 @@
 (depends-on "git-rebase-mode")
 (depends-on "google")
 (depends-on "guide-key")
+(depends-on "haskell-emacs")
 (depends-on "haskell-mode")
 (depends-on "helm")
 (depends-on "helm-c-yasnippet")

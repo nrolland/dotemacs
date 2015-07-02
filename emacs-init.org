@@ -1195,6 +1195,7 @@ title with the date. Easy enough using Yasnippet:"
 *** Dash-haskell
 #+BEGIN_SRC emacs-lisp
 (require 'helm-dash)
+(setq helm-dash-common-docsets '("Redis"))
 (defun dash-activate-package-docsets (root) 
 (interactive)
 (progn
@@ -1214,6 +1215,11 @@ title with the date. Easy enough using Yasnippet:"
 
 #+END_SRC
     
+
+*** haskell-emacs
+#+BEGIN_SRC emcs-lisp
+(require 'haskell-emacs)
+#+END_SRC
 *** command loggin 
 
 This allow to log the keys in a separate window
