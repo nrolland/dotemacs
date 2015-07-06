@@ -42,6 +42,7 @@
  '(global-linum-mode t)
  '(haskell-hoogle-command "hoogle")
  '(haskell-process-log t)
+ '(helm-dash-docsets-path "/Users/nrolland/Drive/docsets")
  '(ns-tool-bar-display-mode (quote both) t)
  '(ns-tool-bar-size-mode nil t)
  '(package-archives
@@ -55,6 +56,7 @@
  '(purescript-mode-hook
    (quote
     (turn-on-purescript-simple-indent inferior-psci-mode)))
+ '(send-mail-function (quote mailclient-send-it))
  '(shm-program-name "
     " t)
  '(vc-annotate-background nil)

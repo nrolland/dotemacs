@@ -1195,7 +1195,7 @@ title with the date. Easy enough using Yasnippet:"
 *** Dash-haskell
 #+BEGIN_SRC emacs-lisp
 (require 'helm-dash)
-(setq helm-dash-common-docsets '("Redis"))
+(setq helm-dash-common-docsets '("Redis" "Haskell" "Font_Awesome"))
 (defun dash-activate-package-docsets (root) 
 (interactive)
 (progn
@@ -1213,12 +1213,50 @@ title with the date. Easy enough using Yasnippet:"
             "/docsets/"))
 )
 
+(defun my/dash-hook ()
+  (local-set-key "\C-h\C-df" 'helm-dash)
+  (local-set-key "\C-h\C-dg" 'helm-dash-at-point)
+  (local-set-key "\C-h\C-dh" 'helm-dash-reset-connections))
+
+(add-hook 'prog-mode-hook 'my/dash-hook)
+
+
 #+END_SRC
     
 
 *** haskell-emacs
 #+BEGIN_SRC emcs-lisp
 (require 'haskell-emacs)
+
+(defun get-target-names-from-cabal-file (filename)
+  "Return the build targets from a cabal file."
+  (let ((eitherErrorTarget (Cabal.buildTargetNames
+                             (file-contents filename))))
+    (if (listp eitherErrorTarget)
+      eitherErrorTarget
+      (error eitherErrorTarget))))
+
+
+(defun file-contents (filename)
+  (with-temp-buffer
+    (insert-file-contents-literally filename)
+    (buffer-substring-no-properties (point-min) (point-max))))
+
+(defun find-cabal-file (dir)
+  "Recurse up a directory in search of a .cabal file."
+  (if (string= "/" dir)
+      (error "not in a cabal project")
+    (let ((cabal-files (directory-files dir t ".\\.cabal$")))
+      (if (not (null cabal-files))
+          (car cabal-files)
+        (find-cabal-file (expand-file-name "../" dir))))))
+
+
+(defun select-cabal-build-target ()
+  (interactive)
+  (let* ((cabal-filename (find-cabal-file default-directory))
+         (build-targets (get-target-names-from-cabal-file cabal-filename)))
+    (ido-completing-read "select cabal build target: " build-targets)))
 #+END_SRC
 *** command loggin 
 
