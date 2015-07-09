@@ -1,4 +1,4 @@
-* Emacs Org Configuration
+flycheck-haskell-setu* Emacs Org Configuration
 * Description
 This file is tangled using =org-babel-load-file=. What this does is generate 
 a =emacs-init.el= from the =emacs-lisp= source blocks.
@@ -145,7 +145,7 @@ Start using =req-package=
 #+BEGIN_SRC emacs-lisp
 (auto-fill-mode)
 #+END_SRC
-
+    
 *** Exec path from shell and other settings
 Attention : environnement of emacs and shell is different
 with the following we can transfer. 
@@ -323,14 +323,20 @@ https://github.com/bbatsov/projectile
 )
 #+END_SRC
 
-*** Hydra
+*** Hydra 
 
+on [[https://github.com/abo-abo/hydra][github]]
+allows to combine key strokes without adding Ctrl key once the start
+sequence is initiated.
+
+"make Emacs bindings that stick around"
+ 
 #+BEGIN_SRC emacs-lisp
 (req-package hydra
   :require windmove
   :config
   (print "hydra zoom installed")
-  (defhydra hydra-zoom (global-map "<f8>")
+  (defhydra hydra-zoom (global-map "<f9>")
     "zoom"
     ("g" text-scale-increase "in")
     ("l" text-scale-decrease "out")
@@ -370,7 +376,7 @@ https://github.com/bbatsov/projectile
       (shrink-window arg)
     (enlarge-window arg)))
 
-(defhydra hydra-splitter (global-map "<f8>")
+(defhydra hydra-splitter (global-map "<f9>")
   "splitter"
   ("<left>" hydra-move-splitter-left)
   ("<down>" hydra-move-splitter-down)
@@ -732,8 +738,8 @@ The main advantage is to do git poperation from emacs
 #+End_SRC
 
 *** org-mode org-languages  org-reveal and org-capture
-
-#+BEGIN_SRC emacs-lisp
+    
+    #+BEGIN_SRC emacs-lisp
 ;;[[http://orgmode.org/manual/Speed-keys.html][speed key]]
 (setq org-use-speed-commands t)
 (setq org-src-fontify-natively t)
@@ -759,6 +765,7 @@ The main advantage is to do git poperation from emacs
 (add-hook 'org-mode-hook
                     (lambda ()
                       (org-set-local 'yas/trigger-key [tab])
+                      (auto-fill-mode)
                       (define-key yas/keymap [tab] 'yas/next-field-or-maybe-expand)))
 ;;file whose name is just number is org mode
 (add-to-list 'auto-mode-alist '(".*/[0-9]*$" . org-mode))
@@ -1365,7 +1372,7 @@ Expand region increases the selected region by semantic units. Just keep pressin
 *** Guide-key
 
 [[https://github.com/kbkbkbkb1/guide-key][Guide-key.el]] displays the available key bindings automatically and
-dynamically.
+dynamically. documentation
 
 #+BEGIN_SRC emacs-lisp :tangle yes
 (req-package guide-key
@@ -1380,6 +1387,7 @@ dynamically.
           '(("rectangle" . font-lock-warning-face)
             ("register"  . font-lock-type-face))))
 (defun guide-key/my-hook-function-for-org-mode ()
+  (guide-key/add-local-guide-key-sequence "C-x")
   (guide-key/add-local-guide-key-sequence "C-c")
   (guide-key/add-local-guide-key-sequence "C-c C-x")
   (guide-key/add-local-highlight-command-regexp "org-"))
@@ -1457,6 +1465,8 @@ All done with  =req-package=.
     (load-file (let ((coding-system-for-read 'utf-8))
                 (shell-command-to-string "agda-mode locate")))
   (error nil))
+
+(add-hook 'agda-mode-hook 'color-theme-tango)
 
 #+END_SRC
 
