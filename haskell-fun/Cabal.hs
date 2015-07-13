@@ -1,6 +1,7 @@
 {-# LANGUAGE RecordWildCards #-}
 module Cabal (buildTargetNames) where
 
+    
 
 import Distribution.PackageDescription.Parse (parsePackageDescription
                                               ,ParseResult(ParseFailed

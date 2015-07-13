@@ -1125,7 +1125,7 @@ title with the date. Easy enough using Yasnippet:"
     (bind-key "C-c C-z" 'haskell-interactive-switch   haskell-mode-map)
     (bind-key "C-c C-l" 'haskell-process-load-file    haskell-mode-map)
     (bind-key "C-c C-b" 'haskell-interactive-switch   haskell-mode-map)
-    (bind-key "C-`"     'haskell-process-bring        haskell-mode-map)
+    (bind-key "C-`"     'haskell-interactive-bring    haskell-mode-map)
     (bind-key "C-c C-t" 'haskell-process-do-type      haskell-mode-map)
     (bind-key "C-c C-i" 'haskell-process-do-info      haskell-mode-map)
     (bind-key "C-c M-."  nil                          haskell-mode-map)
@@ -1177,7 +1177,7 @@ title with the date. Easy enough using Yasnippet:"
 (req-package ghc
   :init (add-hook 'haskell-mode-hook (lambda () 
                                       (progn (print   (shell-command-to-string "ghc --numeric-version") )
-                                             (if (string-prefix-p "7.8.4" (shell-command-to-string "ghc --numeric-version"))
+                                             (if (string-prefix-p "7.8." (shell-command-to-string "ghc --numeric-version"))
                                                    (progn (print "starting ghc-mod !")
                                                           (ghc-init)
                                                           (turn-on-haskell-indent)
