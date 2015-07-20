@@ -15,7 +15,7 @@
  '(add-to-list (quote org-capture-templates) t)
  '(agda2-include-dirs
    (quote
-    ("." "/Users/nrolland/clones/agda-stdlib/src" "/Users/nrolland/clones/HoTT-Agda/lib")))
+    ("." "/Users/nrolland/clones/agda-stdlib/src" "/Users/nrolland/clones/agda-rw")))
  '(ansi-color-faces-vector
    [default default default italic underline success warning error])
  '(aquamacs-additional-fontsets nil t)

@@ -1113,7 +1113,7 @@ title with the date. Easy enough using Yasnippet:"
 *** Haskell mode
 #+BEGIN_SRC emacs-lisp
 (req-package haskell-mode
-  :require (flycheck flycheck-haskell haskell-process)
+  :require (flycheck flycheck-haskell haskell-process company-ghc)
   :commands haskell-mode
   :init
   (add-to-list 'auto-mode-alist '("\\.l?hs$" . haskell-mode))
@@ -1121,7 +1121,8 @@ title with the date. Easy enough using Yasnippet:"
   (progn
     (req-package inf-haskell)
     (req-package hs-lint)
-    (bind-key "C-x C-d" nil haskell-mode-map)
+    (bind-key "C-?"     'company-complete             haskell-mode-map)
+    (bind-key "C-x C-d"  nil                          haskell-mode-map)
     (bind-key "C-c C-z" 'haskell-interactive-switch   haskell-mode-map)
     (bind-key "C-c C-l" 'haskell-process-load-file    haskell-mode-map)
     (bind-key "C-c C-b" 'haskell-interactive-switch   haskell-mode-map)
@@ -1318,7 +1319,7 @@ For more information, type M-x describe-function RET company-mode.
   :config
   (add-hook 'after-init-hook 'global-company-mode))
 
-(req-package company-ghc
+(req-package  company-ghc
              :require company 
              :init (add-to-list 'company-backends 'company-ghc))
 #+END_SRC
