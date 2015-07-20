@@ -1,4 +1,4 @@
-flycheck-haskell-setu* Emacs Org Configuration
+* Emacs Org Configuration
 * Description
 This file is tangled using =org-babel-load-file=. What this does is generate 
 a =emacs-init.el= from the =emacs-lisp= source blocks.
@@ -47,10 +47,16 @@ Cask is initialized in =init.el= with the following:
 *** install Packages  
 - Install [[https://github.com/cask/cask][Cask]].
 - Run =cask install= in =$HOME/.emacs.d/=. to install all the packages mentioned here
-- You can specify for which emacs the cask install will run cf [[https://cask.readthedocs.org/en/latest/guide/usage.html][here]] in Environment variables 
 - We require Cask after loading the dependency management system
 - This should also install req-package
-  
+- You can specify for which emacs the cask install will run cf [[https://cask.readthedocs.org/en/latest/guide/usage.html][here]] in
+  Environment variables  :
+
+#+BEGIN_SRC  sh
+EMACS="/Applications/Emacs.app/Contents/MacOS/Emacs" cask install
+#+END_SRC
+
+
 *** install cabal dependencies
 
 for now it is :
