@@ -1,5 +1,5 @@
 * Emacs Org Configuration
-* Description
+** Description
 This file is tangled using =org-babel-load-file=. What this does is generate 
 a =emacs-init.el= from the =emacs-lisp= source blocks.
 
@@ -15,21 +15,20 @@ a =emacs-init.el= from the =emacs-lisp= source blocks.
     └── users
 #+END_SRC
 
-*** Credits:
+**** Credits:
 
 [[https://github.com/daschwa/dotfiles/blob/master/emacs.d/emacs-init.org][daschwa]]
 
 
-* Installation
+** Installation
 
-
-** Package Management
+*** Package Management
   
 [[https://github.com/rdallasgray/pallet][Pallet]] is a very helpful package management tool for Emacs. 
 It utilizes a dependency management platform called [[https://github.com/cask/cask][Cask]], 
 to update a centralized =Cask= file when you install or remove packages.
-** Instruction for OS X
-*** Install Emacs
+*** Instruction for OS X
+**** Install Emacs
 Soit avec nix, ou emacsforosx, ou 
 #+BEGIN_SRC sh
 brew update
@@ -37,14 +36,14 @@ brew install emacs --cocoa --srgb --with-gnutls
 brew linkapps
 #+END_SRC
 
-*** install Cask
+**** install Cask
 Cask is initialized in =init.el= with the following:
 #+BEGIN_SRC emacs-lisp :tangle no
 (require 'cask "/usr/local/Cellar/cask/0.7.2/cask.el")
 (cask-initialize)
 #+END_SRC
 
-*** install Packages  
+**** install Packages  
 - Install [[https://github.com/cask/cask][Cask]].
 - Run =cask install= in =$HOME/.emacs.d/=. to install all the packages mentioned here
 - We require Cask after loading the dependency management system
@@ -57,7 +56,7 @@ EMACS="/Applications/Emacs.app/Contents/MacOS/Emacs" cask install
 #+END_SRC
 
 
-*** install cabal dependencies
+**** install cabal dependencies
 
 for now it is :
 - ghc-mod 
@@ -70,9 +69,9 @@ rajouter
 ~/.ghc ❯❯❯ cat ghci.conf
 :def hoogle \s -> return $ ":! hoogle --count=15 \"" ++ s ++ "\""%
 
-* Configuration
+** Configuration
 
-** Dependency Management with =req-package=
+*** Dependency Management with =req-package=
 
 Where Pallet keeps track of the packages we have installed, =req-package=
 handles all our internal package dependencies and configurations.
@@ -121,6 +120,7 @@ Start using =req-package=
 
 * Configure modules 
 
+
 *** Set directories 
 
 
@@ -147,7 +147,7 @@ Start using =req-package=
 #+END_SRC
     
 
-*** autofill mode : go to a new line autlatically
+*** autofill mode : go to a new line automatically
 #+BEGIN_SRC emacs-lisp
 (auto-fill-mode)
 #+END_SRC
@@ -614,7 +614,6 @@ https://github.com/joodland/bm
   (set-buffer-file-coding-system 'undecided-dos nil))
 #+END_SRC
 
-
 *** Moving between widnows - Winner mode  - windmove
 
 Winner Mode has been included with GNU Emacs since version 20.
@@ -708,7 +707,6 @@ This is to use the mouse-2 command on mac
 (define-key key-translation-map (kbd "<C-mouse-1>") (kbd "<mouse-2>"))
 #+END_SRC
 
-
 *** Dired
 This is to save-as a file.
 C-x C-j (diredhk-jump to current file) 
@@ -733,7 +731,6 @@ https://gist.github.com/syl20bnr/5516054
 #+END_SRC
 
 
-
 *** magit
 
 This opens a magit status from wish you can push
@@ -743,9 +740,13 @@ The main advantage is to do git poperation from emacs
 (global-set-key "\C-xg" 'magit-status)
 #+End_SRC
 
+
+
 *** org-mode org-languages  org-reveal and org-capture
-    
-    #+BEGIN_SRC emacs-lisp
+
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'auto-mode-alist '("\\.txt\\'" . org-mode))    
+
 ;;[[http://orgmode.org/manual/Speed-keys.html][speed key]]
 (setq org-use-speed-commands t)
 (setq org-src-fontify-natively t)
@@ -781,17 +782,19 @@ The main advantage is to do git poperation from emacs
 
 #+END_SRC
 
-*** Org-agenda and refiling 
+*** Org-agenda settings
 
-Refiling sends entries to other files
 
 #+BEGIN_SRC emacs-lisp
+(setq org-agenda-search-view-always-boolean t)
 (global-set-key "\C-cl" 'org-store-link)
 (global-set-key "\C-ca" 'org-agenda)
 (global-set-key (kbd "<f12>") 'org-agenda)
 (define-key global-map "\C-cc" 'org-capture)
 
 (setq org-directory "~/notes")
+
+ (setq org-log-done 'time)
 
 ;; Use sticky agenda's so they persist
 ;;Sticky agendas allow you to have more than one agenda view created simultaneously.
@@ -811,17 +814,63 @@ Refiling sends entries to other files
      "~/notes/emacs.org" 
      "~/notes/general.org"
      "~/notes/organizer.org"
-     "~/notes/emacs-notes.org"
      "~/notes/business.org" 
      "~/notes/people.org"
-     "~/notes/journal.org"
+     "~/notes/unixnweb.org"
+     "~/notes/utrecht.org"
+
+     "~/notes/emacs-n.org"
+     "~/notes/haskell-n.org"
+     "~/notes/business-n.org" 
+     "~/notes/people-n.org"
+     "~/notes/unixnweb-n.org"
+
      "~/notes/journal"
      )))
+(setq org-agenda-file-regexp "\\`[^.].*\\.org'\\|[0-9]+")
+
+;; Do not dim blocked tasks
+(setq org-agenda-dim-blocked-tasks nil)
+
+;; Compact the block agenda view
+(setq org-agenda-compact-blocks t)
+
+(setq org-agenda-start-on-weekday nil)
+
+#+END_SRC
+   
+*** Org saved searchs example
+#+BEGIN_SRC emacs-lisp
+(setq org-agenda-custom-commands
+      '(("b" "Big books" tags "+BIB_PAGES>1000"))
+)
+
+#+END_SRC
+
+*** org- refiling
+
+Refiling sends entries to other files
+we want to go from general to specific
+
+#+BEGIN_SRC  emacs-lisp
+
+
+(setq org-target-files
+   (quote
+    (
+     ;; "~/notes/general.org"
+     "~/notes/emacs-n.org"
+     "~/notes/haskell-n.org"
+     "~/notes/business-n.org" 
+     "~/notes/people-n.org"
+     "~/notes/unixnweb-n.org"
+     )))
+
 
 ; Refiling C-c C-w
 ; Targets include this file and any file contributing to the agenda - up to 2 levels deep
-(setq org-refile-targets (quote ((nil :maxlevel . 2)
-                                 (org-agenda-files :maxlevel . 2))))
+(setq org-refile-targets (quote ((nil :maxlevel . 1)
+                                 (org-target-files :maxlevel . 1))))
 ; This allows for file like pathing for refiling
 ;  and lets me pick heading and subheading (level <= 2)
 (setq org-refile-use-outline-path t)
@@ -834,6 +883,18 @@ Refiling sends entries to other files
 
 ; Allow refile to create parent tasks with confirmation
 (setq org-refile-allow-creating-parent-nodes (quote confirm))
+
+;Non-nil means provide refile targets as paths.
+;So a level 3 headline will be available as level1/level2/level3.
+;
+;When the value is `file', also include the file name (without directory)
+;into the path.  In this case, you can also stop the completion after
+;the file name, to get entries inserted as top level in the file.
+;
+; When `full-file-path', include the full file path.
+(setq org-refile-use-outline-path 'file)
+
+
 ; Use the current window for indirect buffer display
 ; a activer une fois assimile
 ;(setq org-indirect-buffer-display 'current-window)
@@ -843,19 +904,9 @@ Refiling sends entries to other files
   "Exclude todo keywords with a done state from refile targets"
   (not (member (nth 2 (org-heading-components)) org-done-keywords)))
 (setq org-refile-target-verify-function 'bh/verify-refile-target)
-(setq org-agenda-start-on-weekday nil)
 #+END_SRC
 
-
-#+BEGIN_SRC emacs-lisp
-;; Do not dim blocked tasks
-(setq org-agenda-dim-blocked-tasks nil)
-
-;; Compact the block agenda view
-(setq org-agenda-compact-blocks t)
-
-
-#+END_SRC
+*** org- capture templates
 
 Capture Templates
 #+BEGIN_SRC emacs-lisp
@@ -967,9 +1018,19 @@ SCHEDULED: %^t
 
 *** Org-journal
     
-Configuration from [[http://www.howardism.org/Technical/Emacs/journaling-org.html][Howard abrams]]
+Configuration from [[http://www.howardism.org/Technical/Emacs/journaling-org.html][Howard abrams]]  ([[https://github.com/howardabrams/dot-files/blob/master/emacs-org.org][github]]) was [[https://github.com/howardabrams/dot-files/blob/master/emacs-org.org#journaling][superseded]] by
+org-journal mode
+
 #+BEGIN_SRC emacs-lisp
-(setq org-journal-dir (concat org-directory "journal"))
+(setq org-journal-dir (concat org-directory "/journal/"))
+(setq org-journal-date-format "#+TITLE: Journal Entry- %Y-%b-%d (%A)")
+(setq org-journal-time-format "")
+(require 'org-journal nil t)
+#+END_SRC
+
+**** old config good example of emacs programming
+
+#+BEGIN_SRC emacs-lisp
 (defun get-journal-file-today ()
   "Return filename for today's journal entry."
   (let ((daily-name (format-time-string "%Y%m%d")))
@@ -978,12 +1039,23 @@ Configuration from [[http://www.howardism.org/Technical/Emacs/journaling-org.htm
   "Create and load a journal file based on today's date."
   (interactive)
   (find-file (get-journal-file-today)))
-
 (global-set-key (kbd "C-c f j") 'journal-file-today)
 
+(defun get-journal-file-yesterday ()
+  "Return filename for yesterday's journal entry."
+  (let ((daily-name (format-time-string "%Y%m%d" (time-subtract (current-time) (days-to-time 1)))))
+    (expand-file-name (concat org-journal-dir daily-name))))
+
+(defun journal-file-yesterday ()
+  "Creates and load a file based on yesterday's date."
+  (interactive)
+  (find-file (get-journal-file-yesterday)))
+
+(global-set-key (kbd "C-c f y") 'journal-file-yesterday)
 #+END_SRC
 
-**** Preparing for export
+
+***** Preparing for export
 
 "In case I decide to export my journal, I wanted each file to have a
 title with the date. Easy enough using Yasnippet:"
@@ -1004,10 +1076,10 @@ title with the date. Easy enough using Yasnippet:"
 
 (add-hook 'find-file-hook 'auto-insert)
 (define-auto-insert ".*/[0-9]*$"  'journal-file-insert)
-
 #+END_SRC
 
-**** Next and Previous File from [[https://github.com/howardabrams/dot-files/blob/master/emacs-fixes.org#next-and-previous-file][howard abrams]]  
+
+***** Next and Previous File from [[https://github.com/howardabrams/dot-files/blob/master/emacs-fixes.org#next-and-previous-file][howard abrams]]  
 
    Sometimes it is obvious what is the /next file/ based on the one
    I'm currently reading. For instance, in my journal entries, the
@@ -1079,7 +1151,60 @@ title with the date. Easy enough using Yasnippet:"
   (global-set-key (kbd "C-c f -") 'find-file-decrement)
   (global-set-key (kbd "C-c f p") 'find-file-decrement)
 #+END_SRC
-   
+
+
+
+
+
+*** org meeting Notes
+
+#+BEGIN_SRC emacs-lisp
+
+(defun meeting-notes ()
+  "Call this after creating an org-mode heading for where the notes for the meeting
+should be. After calling this function, call 'meeting-done' to reset the environment."
+  (interactive)
+  (outline-mark-subtree)                              ;; Select org-mode section
+  (narrow-to-region (region-beginning) (region-end))  ;; Only show that region
+  (deactivate-mark)
+  (delete-other-windows)                              ;; Get rid of other windows
+  (text-scale-set 2)                                  ;; Text is now readable by others
+  (fringe-mode 0)
+  (when (require 'olivetti nil t)
+     (olivetti-mode 1)
+     (olivetti-set-width 110)
+     (olivetti-toggle-hide-modeline))
+  (message "When finished taking your notes, run meeting-done."))
+
+(defun meeting-done ()
+  "Attempt to 'undo' the effects of taking meeting notes."
+  (interactive)
+  (widen)                                       ;; Opposite of narrow-to-region
+  (text-scale-set 0)                            ;; Reset the font size increase
+  (fringe-mode 1)
+  (when (require 'olivetti nil t)
+      (olivetti-toggle-hide-modeline)
+      (olivetti-mode 0))
+  (winner-undo))                                ;; Put the windows back in place
+
+#+END_SRC
+
+*** org-mod colors
+
+unfortunately this disables parenthesis balance checking...
+(defface org-block-begin-line
+  '((t (:underline "#A7A6AA" :foreground "#008ED1" :background "#EAEAFF")))
+  "Face used for the line delimiting the begin of source blocks.")
+
+(defface org-block-background
+  '((t (:background "#FFFFEA")))
+  "Face used for the source block background.")
+
+(defface org-block-end-line
+  '((t (:overline "#A7A6AA" :foreground "#008ED1" :background "#EAEAFF")))
+  "Face used for the line delimiting the end of source blocks.")
+#+BEGIN_SRC emacs-lisp
+#+END_SRC
 
 *** Flycheck
     Not sure what to do with this.
@@ -1103,7 +1228,6 @@ title with the date. Easy enough using Yasnippet:"
 #+BEGIN_SRC emacs-lisp
 
 #+END_SRC
-
 
 *** ac auto-complete
 #+BEGIN_SRC emacs-lisp
@@ -1376,7 +1500,7 @@ Expand region increases the selected region by semantic units. Just keep pressin
 
 
 
-*** Guide-key
+*** Guide-key for menu search
 
 [[https://github.com/kbkbkbkb1/guide-key][Guide-key.el]] displays the available key bindings automatically and
 dynamically. documentation
@@ -1463,7 +1587,7 @@ The bookmark descriptions include the tags.
 #+END_SRC
 
 *** Rust 
-(add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-mode))
+    (add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-mode))
 * Finish Requirements
 All done with  =req-package=.
 #+BEGIN_SRC emacs-lisp

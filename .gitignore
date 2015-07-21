@@ -16,3 +16,5 @@ bookmarks
 /.mc-lists.el
 
 
+recentf
+/.emacs.desktop

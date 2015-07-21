@@ -15,7 +15,7 @@
  '(add-to-list (quote org-capture-templates) t)
  '(agda2-include-dirs
    (quote
-    ("." "/Users/nrolland/clones/agda-stdlib/src" "/Users/nrolland/clones/agda-rw")))
+    ("." "/Users/nrolland/clones/agda-stdlib/src" "/Users/nrolland/clones/HoTT-Agda/lib")))
  '(ansi-color-faces-vector
    [default default default italic underline success warning error])
  '(aquamacs-additional-fontsets nil t)
@@ -45,6 +45,9 @@
  '(helm-dash-docsets-path "/Users/nrolland/Drive/docsets")
  '(ns-tool-bar-display-mode (quote both) t)
  '(ns-tool-bar-size-mode nil t)
+ '(org-agenda-files
+   (quote
+    ("~/notes/notes.org" "~/notes/emacs.org" "~/notes/general.org" "~/notes/organizer.org" "~/notes/emacs-notes.org" "~/notes/business.org" "~/notes/people.org" "~/notes/unixandweb.org" "~/notes/utrecht.org")))
  '(package-archives
    (quote
     (("gnu" . "http://elpa.gnu.org/packages/")
