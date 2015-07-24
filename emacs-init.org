@@ -32,9 +32,11 @@ to update a centralized =Cask= file when you install or remove packages.
 Soit avec nix, ou emacsforosx, ou 
 #+BEGIN_SRC sh
 brew update
-brew install emacs --cocoa --srgb --with-gnutls
+brew install emacs --with-cocoa --srgb --with-gnutls
 brew linkapps
 #+END_SRC
+
+--
 
 **** install Cask
 Cask is initialized in =init.el= with the following:
@@ -117,7 +119,7 @@ Start using =req-package=
 #+END_SRC
 
 
-
+ 
 * Configure modules 
 
 
