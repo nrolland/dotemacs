@@ -701,6 +701,14 @@ With negative N, does this in the reverse order."
 #+END_SRC
 
 
+*** colors in terminal and in window mode
+
+#+BEGIN_SRC emacs-lisp
+(custom-set-variables
+ (if (window-system)
+     '(custom-enabled-themes (quote (tango)))
+     '(custom-enabled-themes (quote (misterioso)))
+#+END_SRC
 
 *** Mac stuff
 This is to use the mouse-2 command on mac 
