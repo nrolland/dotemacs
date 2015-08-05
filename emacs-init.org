@@ -707,7 +707,7 @@ With negative N, does this in the reverse order."
 (custom-set-variables
  (if (window-system)
      '(custom-enabled-themes (quote (tango)))
-     '(custom-enabled-themes (quote (misterioso)))
+     '(custom-enabled-themes (quote (misterioso)))))
 #+END_SRC
 
 *** Mac stuff
@@ -755,6 +755,10 @@ The main advantage is to do git poperation from emacs
 *** org-mode org-languages  org-reveal and org-capture
 
 #+BEGIN_SRC emacs-lisp
+;; should be first 
+(setq org-directory "~/notes")
+
+
 (add-to-list 'auto-mode-alist '("\\.txt\\'" . org-mode))    
 
 ;;[[http://orgmode.org/manual/Speed-keys.html][speed key]]
@@ -763,8 +767,10 @@ The main advantage is to do git poperation from emacs
 
 ;;to allow image to be resized
 (setq org-image-actual-width nil)
-
+(print "setting org-mobile-inbox-for-pull")
 (setq org-mobile-inbox-for-pull (concat org-directory "/flagged.org"))
+(print (concat "set to : " org-mobile-inbox-for-pull))
+
 ;; Set to <your Dropbox root directory>/MobileOrg.
 (setq org-mobile-directory "~/Dropbox/Apps/MobileOrg")
 
@@ -802,7 +808,6 @@ The main advantage is to do git poperation from emacs
 (global-set-key (kbd "<f12>") 'org-agenda)
 (define-key global-map "\C-cc" 'org-capture)
 
-(setq org-directory "~/notes")
 
  (setq org-log-done 'time)
 
@@ -1050,6 +1055,7 @@ org-journal mode
   (interactive)
   (find-file (get-journal-file-today)))
 (global-set-key (kbd "C-c f j") 'journal-file-today)
+(global-set-key (kbd "C-c f t") 'journal-file-today)
 
 (defun get-journal-file-yesterday ()
   "Return filename for yesterday's journal entry."

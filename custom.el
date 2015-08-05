@@ -23,6 +23,7 @@
  '(aquamacs-customization-version-id 307 t)
  '(aquamacs-tool-bar-user-customization nil t)
  '(bmkp-last-as-first-bookmark-file "~/.emacs.d/bookmarks")
+ '(custom-enabled-themes (quote (tango)))
  '(custom-safe-themes
    (quote
     ("28ec8ccf6190f6a73812df9bc91df54ce1d6132f18b4c8fcc85d45298569eb53" "a8245b7cc985a0610d71f9852e9f2767ad1b852c2bdea6f4aadc12cce9c4d6d0" "8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" "d677ef584c6dfc0697901a44b885cc18e206f05114c8a3b7fde674fce6180879" default)))
@@ -46,7 +47,7 @@
  '(ns-tool-bar-size-mode nil t)
  '(org-agenda-files
    (quote
-    ("~/notes/notes.org" "~/notes/emacs.org" "~/notes/general.org" "~/notes/organizer.org" "~/notes/emacs-notes.org" "~/notes/business.org" "~/notes/people.org" "~/notes/unixandweb.org" "~/notes/utrecht.org")))
+    ("~/notes/notes.org" "~/notes/emacs.org" "~/notes/general.org" "~/notes/organizer.org" "~/notes/business.org" "~/notes/people.org" "~/notes/unixnweb.org" "~/notes/utrecht.org" "~/notes/emacs-n.org" "~/notes/haskell-n.org" "~/notes/business-n.org" "~/notes/people-n.org" "~/notes/unixnweb-n.org" "/Users/nrolland/notes/journal/20150720" "/Users/nrolland/notes/journal/20150721" "/Users/nrolland/notes/journal/20150723" "/Users/nrolland/notes/journal/20150724" "/Users/nrolland/notes/journal/20150725")))
  '(package-archives
    (quote
     (("gnu" . "http://elpa.gnu.org/packages/")
