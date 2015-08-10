@@ -833,6 +833,7 @@ The main advantage is to do git poperation from emacs
      "~/notes/people.org"
      "~/notes/unixnweb.org"
      "~/notes/utrecht.org"
+     "~/notes/snap.org"
 
      "~/notes/emacs-n.org"
      "~/notes/haskell-n.org"
@@ -1305,6 +1306,7 @@ unfortunately this disables parenthesis balance checking...
       (setq-local completion-at-point-functions '(haskell-process-completions-at-point)))
     (setq haskell-font-lock-symbols 'unicode)
     (setq haskell-literate-default 'tex)
+    (setq haskell-interactive-popup-errors nil)
     ;;when stylish-on-save enabled, the TAGS file is not generated..
     (setq haskell-stylish-on-save t)
     (setq haskell-tags-on-save t)

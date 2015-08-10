@@ -47,7 +47,7 @@
  '(ns-tool-bar-size-mode nil t)
  '(org-agenda-files
    (quote
-    ("~/notes/notes.org" "~/notes/emacs.org" "~/notes/general.org" "~/notes/organizer.org" "~/notes/business.org" "~/notes/people.org" "~/notes/unixnweb.org" "~/notes/utrecht.org" "~/notes/emacs-n.org" "~/notes/haskell-n.org" "~/notes/business-n.org" "~/notes/people-n.org" "~/notes/unixnweb-n.org" "/Users/nrolland/notes/journal/20150720" "/Users/nrolland/notes/journal/20150721" "/Users/nrolland/notes/journal/20150723" "/Users/nrolland/notes/journal/20150724" "/Users/nrolland/notes/journal/20150725")))
+    ("~/notes/notes.org" "~/notes/emacs.org" "~/notes/general.org" "~/notes/organizer.org" "~/notes/business.org" "~/notes/people.org" "~/notes/unixnweb.org" "~/notes/utrecht.org" "~/notes/emacs-n.org" "~/notes/haskell-n.org" "~/notes/business-n.org" "~/notes/people-n.org" "~/notes/unixnweb-n.org" "/Users/nrolland/notes/journal/#20150807#" "/Users/nrolland/notes/journal/20150720" "/Users/nrolland/notes/journal/20150721" "/Users/nrolland/notes/journal/20150723" "/Users/nrolland/notes/journal/20150724" "/Users/nrolland/notes/journal/20150725" "/Users/nrolland/notes/journal/20150802" "/Users/nrolland/notes/journal/20150803" "/Users/nrolland/notes/journal/20150804" "/Users/nrolland/notes/journal/20150807")))
  '(package-archives
    (quote
     (("gnu" . "http://elpa.gnu.org/packages/")
